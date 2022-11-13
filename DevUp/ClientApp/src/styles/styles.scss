@@ -1,0 +1,39 @@
+// Vender
+@import "bootstrap-custom";
+@import "../../node_modules/@yaireo/tagify/src/tagify.scss";
+@import "../../node_modules/toastr/toastr.scss";
+@import "../../node_modules/pikaday/scss/pikaday.scss";
+@import "pikaday";
+@import "animations";
+
+//Quiz
+@import "shades-of-purple";
+@import "tagify";
+@import "quiz";
+@import "dialog";
+@import "blog";
+@import "enter";
+
+.scroll-top {
+    position: fixed;
+    bottom: 40px;
+    right: 20px;
+    width: 30px;
+    height: 30px;
+    font-size: 40px;
+    color: $gray-500;
+    transition: all 0.2s;
+
+    &:hover {
+        color: $gray-800;
+    }
+}
+
+select {
+    appearance: none;
+    background-repeat: no-repeat !important;
+    background-position: top -5px right -5px !important;
+    background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDIxLjEuMCwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IgoJIHdpZHRoPSI0OHB4IiBoZWlnaHQ9IjIwMHB4IiB2aWV3Qm94PSIwIDAgNDggMjAwIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCA0OCAyMDA7IiB4bWw6c3BhY2U9InByZXNlcnZlIj4KPHN0eWxlIHR5cGU9InRleHQvY3NzIj4KCS5zdDB7ZmlsbDojMjA2MjZEO30KCS5zdDF7ZmlsbDojMDAzMDNDO30KPC9zdHlsZT4KPHBhdGggY2xhc3M9InN0MCIgZD0iTTE0LDIwbDgsOGw4LThIMTR6Ii8+CjxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik0xNCwxMjBsOCw4bDgtOEgxNHoiLz4KPC9zdmc+Cg==") !important;
+    padding-right: 40px !important;
+    background-size: auto !important;
+}

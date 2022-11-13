@@ -1,0 +1,41 @@
+<template>
+
+    <div class="main-content">
+        <div class="main-content-wrapper">
+            <h2>Top tags</h2>
+            <div class="tags-container">
+                <div class="tag"
+                     data-id.bind="tag.id"
+                     repeat.for="tag of tags">
+                    <div class="tag__color"
+                         css="background-color:${tag.backGroundColorHex || '#08090a'}">
+                    </div>
+                    <div class="tag__body">
+                        <div class="tag__name">
+                            ${tag.name | tagName}
+                        </div>
+                        <div class="tag__description">
+                            ${tag.description}
+                        </div>
+                        <div class="post-count">
+                            ${tag.postCount} posts published
+                        </div>
+                    </div>
+                    <div class="actions">
+                        <button if.bind="!tag.followed"
+                                click.delegate="followTag(tag)"
+                                class="btn btn--gray-400 btn--bold">Follow</button>
+                        <button if.bind="tag.followed"
+                                click.delegate="unFollowTag(tag)"
+                                class="btn btn--outline btn--bold">Following</button>
+                        <button if.bind="state.user.isAdmin"
+                                click.delegate="editTag(tag)"
+                                class="btn btn-light">Edit</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</template>

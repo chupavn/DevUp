@@ -1,0 +1,174 @@
+/*==============================
+=            pikaday js        =
+==============================*/
+.pika-single {
+    // z-index: 9998;
+}
+
+.pika-lendar {
+    float: left;
+    width: 300px;
+    max-width: 100%;
+    margin: 8px;
+}
+
+.pika-label {
+    padding: 5px 6px;
+    font-size: 16px;
+}
+
+.pika-button {
+    padding: 8px;
+    text-align: center;
+    font-size: 14px;
+}
+
+// .is-today .pika-button {
+//     color: $blue;
+//     font-weight: bold;
+//     &:hover {
+//         color: $pd-day-hover-color;
+//     }
+// }
+
+// .is-selected .pika-button,
+// .has-event .pika-button {
+//     color: #fff;
+//     font-weight: bold;
+//     border-radius: 0px;
+// }
+
+// .pika-button:hover,
+// .pika-row.pick-whole-week:hover .pika-button {
+//     box-shadow: none;
+//     border-radius: 0px;
+//     // color: #fff;
+// }
+
+// .is-inrange .pika-button {
+//     &:hover {
+//         color: $pd-day-hover-color;
+//         background: $pd-day-hover-bg;
+//         box-shadow: none;
+//         border-radius: $pd-border-radius;
+//     }
+// }
+
+// .is-startrange .pika-button {
+//     color: #fff;
+// }
+
+// .is-endrange .pika-button {
+//     color: #fff;
+// }
+
+.pika-week {
+    font-size: 12px;
+}
+
+.pika-table {
+    th {
+        font-size: 13px;
+    }
+}
+
+datepicker {
+    width: 100%;
+}
+
+.datepicker-container {
+    position: relative;
+    width: 100%;
+
+    input {
+        padding-right: 60px;
+    }
+
+    &:hover {
+        i {
+            opacity: 0.6;
+        }
+    }
+
+    i {
+        position: absolute;
+        cursor: pointer;
+        opacity: 0;
+        transition: all 0.3s;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+
+    i.date-icon {
+        top: 12px;
+        right: 10px;
+        opacity: 0.8;
+    }
+
+    i.clear-icon {
+        top: 13px;
+        right: 36px;
+        font-size: 14px;
+    }
+}
+
+.date-range {
+    padding: 0;
+    margin: 0;
+    margin-right: 10px;
+
+    display: flex;
+    flex-direction: column;
+    list-style-type: none;
+
+    &-item {
+        display: block;
+        min-width: 140px;
+        width: 100%;
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: all 0.3s;
+        border-bottom: 1px solid $gray-200;
+
+        &--active {
+            background-color: $blue-600;
+            color: $white;
+        }
+
+        &:hover {
+            background-color: $gray-300;
+            color: $black;
+        }
+    }
+}
+
+.months-wrapper {
+    width: auto;
+    list-style-type: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 10px;
+    cursor: default;
+
+    .month-item {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 60px;
+        height: 60px;
+        border: 1px solid $gray-400;
+        cursor: pointer;
+        transition: all 0.3s;
+
+        &.current {
+            color: $blue-600;
+            font-weight: bold;
+        }
+
+        &:hover {
+            background-color: $gray-300;
+        }
+    }
+}

@@ -1,0 +1,136 @@
+.animate-slide-in-right.au-enter {
+    transform: translateX(100%);
+}
+
+.animate-slide-in-right.au-enter-active {
+    animation: SlideInRight 0.3s;
+}
+
+.animate-slide-out-right.au-leave-active {
+    animation: SlideOutRight 0.3s;
+}
+
+.animate-slide-in-left.au-enter {
+    transform: translateX(-100%);
+}
+
+.animate-slide-in-left.au-enter-active {
+    animation: SlideInLeft 0.3s;
+}
+
+.animate-slide-out-left.au-leave-active {
+    animation: SlideOutLeft 0.3s;
+}
+
+.animate-fade-in.au-enter {
+    opacity: 0;
+}
+
+.animate-fade-in.au-enter-active {
+    animation: FadeIn 0.3s;
+}
+
+.animate-fade-out.au-leave-active {
+    animation: FadeOut 0.3s;
+}
+
+.animate-fade-out.au-left {
+    opacity: 0;
+}
+
+.au-stagger {
+    animation-delay: 10ms;
+}
+
+@keyframes SlideInRight {
+    from {
+        transform: translateX(100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes SlideOutRight {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(100%);
+    }
+}
+
+@keyframes SlideInLeft {
+    from {
+        transform: translateX(-100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes SlideOutLeft {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+@keyframes FadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes FadeOut {
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes bounce {
+    from,
+    20%,
+    53%,
+    to {
+        animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+        transform: translate3d(0, 0, 0);
+    }
+
+    40%,
+    43% {
+        animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+        transform: translate3d(0, -30px, 0) scaleY(1.1);
+    }
+
+    70% {
+        animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+        transform: translate3d(0, -15px, 0) scaleY(1.05);
+    }
+
+    80% {
+        transition-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+        transform: translate3d(0, 0, 0) scaleY(0.95);
+    }
+
+    90% {
+        transform: translate3d(0, -4px, 0) scaleY(1.02);
+    }
+}
+
+// Tippy
+.tippy-box[data-animation="rotate"][data-state="hidden"] {
+    opacity: 0;
+    transform: rotate(90deg);
+}
+
+.tippy-box[data-animation="skew"][data-state="hidden"] {
+    opacity: 0;
+    transform: skew(170deg, 170deg);
+}

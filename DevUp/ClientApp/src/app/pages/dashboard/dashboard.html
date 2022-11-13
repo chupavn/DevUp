@@ -1,0 +1,74 @@
+<template>
+    <require from="./article/article-list"></require>
+
+    <div class="main-content">
+        <div class="main-content-wrapper">
+            <h1 class="page-header">Dashboard</h1>
+            <section class="dashboard__statistics">
+                <div class="statistic__item">
+                    <div class="item__count">10</div>
+                    <div class="item__title">Total post reactions</div>
+                </div>
+                <div class="statistic__item">
+                    <div class="item__count">&lt; 500</div>
+                    <div class="item__title">Total post views</div>
+                </div>
+            </section>
+            <section class="dashboard__main row">
+                <div class="dashboard__main__left col-md-3">
+                    <div class="menu-horizontal">
+                        <a
+                            href
+                            click.delegate="selectMenuItem('posts')"
+                            class="
+                                menu__item
+                                ${activeMenuItem==='posts'?'active':''}
+                            "
+                        >
+                            <span class="item-name">Posts</span>
+                            <span class="badge bg-secondary"
+                                >${articles.length}</span
+                            >
+                        </a>
+                        <a
+                            href
+                            click.delegate="selectMenuItem('series')"
+                            class="
+                                menu__item
+                                ${activeMenuItem==='series'?'active':''}
+                            "
+                        >
+                            <span class="item-name">Series</span>
+                        </a>
+                        <a
+                            href
+                            click.delegate="selectMenuItem('following_tags')"
+                            class="
+                                menu__item
+                                ${activeMenuItem==='following_tags'?'active':''}
+                            "
+                        >
+                            <span class="item-name">Following tags</span>
+                        </a>
+                        <a
+                            href
+                            click.delegate="selectMenuItem('following_users')"
+                            class="
+                                menu__item
+                                ${activeMenuItem==='following_users'?'active':''}
+                            "
+                        >
+                            <span class="item-name">Following users</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="dashboard__main__right col-md-9">
+                    <article-list
+                        if.bind="activeMenuItem==='posts'"
+                        articles.bind="articles"
+                    ></article-list>
+                </div>
+            </section>
+        </div>
+    </div>
+</template>

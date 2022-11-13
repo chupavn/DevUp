@@ -1,0 +1,112 @@
+<template>
+  <require from="./tags"></require>
+
+  <div ref="listEl">
+    <div
+      data-id="${article.id}"
+      class="article-item-full au-animate animate-fade-in"
+      repeat.for="article of articles"
+    >
+      <a
+        href
+        route-href="route: article-details; params.bind: { id: article._slugId }"
+      >
+        <img
+          class="img-cover"
+          if.bind="$index === 0 && article.coverImageUrl"
+          src.bind="article.coverImageUrl"
+          onerror="this.src='https://picsum.photos/662/250';"
+          alt="cover"
+        />
+      </a>
+      <div class="article-inner">
+        <div class="article-header">
+          <a
+            href
+            route-href="route: user-profile; params.bind: { userId: article.author.id }"
+          >
+            <avatar-img
+              class="me-2"
+              image-src.bind="article.author.avatarUrl"
+            ></avatar-img>
+          </a>
+
+          <div class="info">
+            <a
+              href
+              route-href="route: user-profile; params.bind: { userId: article.author.id }"
+              class="author-name"
+              >${article.author.name}</a
+            >
+            <a
+              href
+              route-href="route: article-details; params.bind: { id: article._slugId }"
+              class="created-time"
+              >${article.createAt | monthDate}</a
+            >
+          </div>
+        </div>
+        <div class="article-body">
+          <div class="article__title">
+            <a
+              href
+              route-href="route: article-details; params.bind: { id: article._slugId }"
+            >
+              ${article.title}
+            </a>
+          </div>
+          <tags tags.bind="article.tags"></tags>
+          <div class="article-body__footer">
+            <div class="left">
+              <a
+                if.bind="article.likedCount || article.readingListCount"
+                class="action"
+                href
+                route-href="route: article-details; params.bind: { id: article._slugId }"
+              >
+                <i class="far fa-heart action-icon"></i>
+                <span class="action-text"
+                  >${article.likedCount + article.readingListCount}
+                  <span class="hide-md">reactions</span></span
+                >
+              </a>
+              <a
+                class="action"
+                href
+                route-href="route: article-details; params.bind: { id: article._slugId }"
+              >
+                <i class="far fa-comments action-icon"></i>
+                <span class="action-text">
+                  <span if.bind="article.comments && article.comments.length>0"
+                    >${article.comments.length}
+                    <span class="hide-md">comments</span>
+                  </span>
+                  <span else class="hide-md">Add comments</span>
+                </span>
+              </a>
+            </div>
+            <div class="right">
+              <div class="read-time">
+                ${article.content | readingTime} min read
+              </div>
+              <button
+                if.bind="!article.isReadingList"
+                click.delegate="addToReadingList(article)"
+                class="btn"
+              >
+                Save
+              </button>
+              <button
+                if.bind="article.isReadingList"
+                click.delegate="removeReadingList(article)"
+                class="btn"
+              >
+                Saved
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

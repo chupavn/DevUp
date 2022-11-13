@@ -1,0 +1,144 @@
+<template>
+    <require from="../article/article-by-tag-simple"></require>
+    <require from="../article/article-list-full"></require>
+
+
+    <section class="main-content">
+        <div class="main-content-wrapper row">
+            <div class="left-side col-md-2 d-none d-md-block">
+                <div class="box"
+                     if.bind="!state.auth.loggedIn">
+                    <div class="title mb-2"><a href="#">DEV Community</a> is a community of 619,270 amazing
+                        developers</div>
+                    <span class="info">We're a place where coders share, stay up-to-date and grow their
+                        careers.</span>
+                    <div class="d-grid gap-2 mt-3">
+                        <button class="btn btn-primary btn--bold"
+                                click.delegate="register()">Create new account</button>
+                        <a href
+                           click.delegate="login()"
+                           class="btn btn--ghost btn-link btn-login">Log in</a>
+                    </div>
+
+                </div>
+                <ul class="left-menu">
+                    <li class="menu-item__li">
+                        <a href="#"
+                           class="menu-item__link"><i class="fa fa-home item__icon"></i>Home</a>
+                    </li>
+                    <li class="menu-item__li"
+                        if.bind="state.auth.loggedIn">
+                        <a href
+                           route-href='route: reading-list;'
+                           class="menu-item__link"><i class="fa fa-book item__icon"></i>Reading List</a>
+                    </li>
+                    <li class="menu-item__li"
+                        if.bind="!state.auth.loggedIn">
+                        <a href
+                           click.delegate="login()"
+                           class="menu-item__link bold"><i class="fa fa-user item__icon"></i>Sign in/Up</a>
+                    </li>
+                    <li class="menu-item__li">
+                        <a href
+                           route-href='route: tags;'
+                           class="menu-item__link"><i class="fa fa-tag item__icon"></i>Tags</a>
+                    </li>
+                    <li class="menu-item__li"
+                        if.bind="!moreMenuVisible">
+
+                        <a href
+                           click.delegate="showMoreMenu()"
+                           class="menu-item__link more"><i
+                               class="fab fa-odnoklassniki item__icon invisible"></i>More...</a>
+                    </li>
+                    <template if.bind="moreMenuVisible">
+                        <li class="menu-item__li au-animate animate-fade-in"
+                            if.bind="moreMenuVisible">
+                            <a href
+                               route-href='route: about;'
+                               class="menu-item__link"><i class="fa fa-info item__icon"></i>About</a>
+                        </li>
+                        <li class="menu-item__li au-animate animate-fade-in"
+                            if.bind="moreMenuVisible">
+                            <a href
+                               class="menu-item__link"><i class="fab fa-odnoklassniki item__icon"></i>Privacy Policy</a>
+                        </li>
+                    </template>
+                </ul>
+
+                <div class="popular-tags">
+                    <div class="title">${state.auth.loggedIn?'My Tags':'Popular Tags'}</div>
+                    <div class="tags">
+                        <a if.bind="!state.auth.loggedIn"
+                           href
+                           route-href='route: articles-by-tag; params.bind: { tagName: tag.name }'
+                           class="tag"
+                           repeat.for="tag of allTags">
+                            <div class="tag-name">${tag.name | tagName}</div>
+                            <button class="btn btn-sm">Follow</button>
+                        </a>
+                        <a if.bind="state.auth.loggedIn"
+                           href
+                           route-href='route: articles-by-tag; params.bind: { tagName: tag.name }'
+                           class="tag"
+                           repeat.for="tag of followingTags">
+                            <div class="tag-name">${tag.name | tagName}</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="main-side col">
+                <div class="main-side-header">
+                    <h3>Posts</h3>
+                    <ul class="menu-side-menu">
+                        <li click.delegate="setTopBy('')"
+                            class="menu-item ${!topBy? 'active' : ''}">
+                            <a href
+                               class="item-link">Feed</a>
+                        </li>
+                        <li click.delegate="setTopBy('week')"
+                            class="menu-item ${topBy === 'week' ? 'active' : ''}">
+                            <a href
+                               class="item-link">Week</a>
+                        </li>
+                        <li click.delegate="setTopBy('month')"
+                            class="menu-item ${topBy === 'month' ? 'active' : ''}">
+                            <a href
+                               class="item-link">Month</a>
+                        </li>
+                        <li click.delegate="setTopBy('year')"
+                            class="menu-item ${topBy === 'year' ? 'active' : ''}">
+                            <a href
+                               class="item-link">Year</a>
+                        </li>
+                        <li click.delegate="setTopBy('infinity')"
+                            class="menu-item ${topBy === 'infinity' ? 'active' : ''}">
+                            <a href
+                               class="item-link">Infinity</a>
+                        </li>
+                        <li click.delegate="setTopBy('latest')"
+                            class="menu-item ${topBy === 'latest' ? 'active' : ''}">
+                            <a href
+                               class="item-link">Latest</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="articles au-stagger"
+                     infinite-scroll="callback.call: getData();is-active: !getting && hasNextPage">
+                    <article-list-full articles.bind="articles"></article-list-full>
+                </div>
+            </div>
+            <div class="right-side col">
+                <article-by-tag-simple tag-name="news"
+                                       top.bind="5"></article-by-tag-simple>
+                <article-by-tag-simple tag-name="help"
+                                       top.bind="5"></article-by-tag-simple>
+                <article-by-tag-simple tag-name="discuss"
+                                       top.bind="5"></article-by-tag-simple>
+                <article-by-tag-simple tag-name="challenge"
+                                       top.bind="5"></article-by-tag-simple>
+            </div>
+        </div>
+    </section>
+
+</template>

@@ -1,0 +1,130 @@
+<template>
+    <require from="./tags"></require>
+
+    <div class="main-content">
+        <div class="main-content-wrapper reading-list">
+            <div class="reading-list__header row px-2 px-l-0">
+                <div class="title col-md-4">
+                    Reading list (${articles.length})
+                </div>
+                <div class="filters col-md-8">
+                    <button
+                        click.delegate="toggleViewArchive()"
+                        class="btn btn--outline btn--bold"
+                    >
+                        ${viewingArchive?'View reading list':'View archive'}
+                    </button>
+                    <input
+                        on-enter.call="search()"
+                        value.bind="searchText"
+                        type="text"
+                        class="search"
+                    />
+                </div>
+            </div>
+            <div class="reading-list__body row">
+                <div class="left-side col-md-4">
+                    <div class="mb-3 d-md-none">
+                        <select
+                            class="form-select"
+                            value.bind="activeTag"
+                            change.delegate="search()"
+                        >
+                            <option model.bind="null">all tags</option>
+                            <option repeat.for="tag of tags" model.bind="tag">
+                                ${tag.name}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="tags d-none d-md-flex">
+                        <a
+                            href
+                            click.delegate="selectTag()"
+                            class="tag ${!activeTag?'active':''}"
+                        >
+                            <span class="tag-name">all tags</span>
+                        </a>
+                        <a
+                            href
+                            click.delegate="selectTag(tag)"
+                            class="tag ${activeTag.id===tag.id?'active':''}"
+                            repeat.for="tag of tags"
+                        >
+                            <span class="tag-name">${tag.name | tagName}</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="box main-side col-md-8">
+                    <div class="article-list">
+                        <div
+                            class="article-wrapper"
+                            repeat.for="article of articles"
+                        >
+                            <div class="article">
+                                <avatar-img
+                                    containerless
+                                    size.bind="36"
+                                    image-src.bind="article.author.avatarUrl"
+                                >
+                                </avatar-img>
+                                <div class="article__content">
+                                    <a
+                                        href
+                                        route-href="route: article-details; params.bind: { id: article._slugId }"
+                                        class="article__title"
+                                        >${article.title}</a
+                                    >
+                                    <div class="article__meta">
+                                        <a href class="author__name">
+                                            ${article.author.name}
+                                        </a>
+                                        <div class="separate-dot">•</div>
+                                        <div class="created-date">
+                                            ${article.createAt | monthDate}
+                                        </div>
+                                        <div class="separate-dot">•</div>
+                                        <div class="read-time">
+                                            ${article.content | readingTime} min
+                                            read
+                                        </div>
+                                        <div
+                                            if.bind="article.tags && article.tags.length>0"
+                                            class="separate-dot"
+                                        >
+                                            •
+                                        </div>
+                                        <tags
+                                            if.bind="article.tags && article.tags.length>0"
+                                            tags.bind="article.tags"
+                                        ></tags>
+                                    </div>
+                                </div>
+                            </div>
+                            <button
+                                click.delegate="archive(article)"
+                                if.bind="!article.isArchivedReadingList"
+                                class="btn btn--ghost"
+                            >
+                                Archive
+                            </button>
+                            <button
+                                click.delegate="unarchive(article)"
+                                if.bind="article.isArchivedReadingList"
+                                class="btn btn--ghost"
+                            >
+                                Unarchive
+                            </button>
+                        </div>
+
+                        <div
+                            if.bind="!articles || articles.length === 0"
+                            class="not-found-text"
+                        >
+                            <span> Nothing with this filter 🤔 </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

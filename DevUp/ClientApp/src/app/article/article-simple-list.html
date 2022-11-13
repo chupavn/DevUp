@@ -1,0 +1,16 @@
+<template>
+    <require from="./tags"></require>
+
+    <ul class="article-simple-list">
+        <li class="item"
+            repeat.for="article of articles">
+            <a href
+               route-href='route: article-details; params.bind: { id: article._slugId }'
+               class="item__link">
+                ${article.title}
+            </a>
+            <tags if.bind="showTags && article.tags && article.tags.length>0"
+                  tags.bind="article.tags"></tags>
+        </li>
+    </ul>
+</template>

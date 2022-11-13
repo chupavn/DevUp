@@ -1,0 +1,19 @@
+.quiz-list {
+    .quiz__item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: 1px solid $gray-200;
+        padding: 10px;
+        cursor: pointer;
+        transition: all 0.3s;
+
+        &:hover {
+            background-color: $gray-200;
+        }
+
+        .quiz__title {
+            font-size: 18px;
+        }
+    }
+}

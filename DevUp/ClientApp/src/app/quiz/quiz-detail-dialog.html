@@ -1,0 +1,62 @@
+<template>
+  <ux-dialog>
+    <ux-dialog-body>
+      <div class="dialog">
+        <button
+          class="btn btn-light button-close"
+          click.delegate="dialogController.cancel()"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+        <div class="dialog__header">
+          <h4>${quiz.title}</h4>
+        </div>
+        <div class="dialog__detail">
+          <div class="detail__content">
+            <div
+              class="content__section au-animate animate-fade-in animate-fade-out"
+              if.bind="hasMeasure"
+            >
+              <h6>Measure</h6>
+              Donec quam felis, ultricies nec, pellentesque eu, pretium quis,
+              sem. In turpis. Praesent blandit laoreet nibh. Nam pretium turpis
+              et arcu. Nullam sagittis. Fusce egestas elit eget lorem. Maecenas
+              nec odio et ante tincidunt tempus. Etiam ultricies nisi vel augue.
+              Praesent adipiscing. Ut tincidunt tincidunt erat.
+            </div>
+            <div
+              class="content__section au-animate animate-fade-in animate-fade-out"
+              if.bind="hasStudy"
+            >
+              <h6>Study</h6>
+              Quisque rutrum. Nunc interdum lacus sit amet orci. Nam pretium
+              turpis et arcu. Cras dapibus. Aenean posuere, tortor sed cursus
+              feugiat, nunc augue blandit nunc, eu sollicitudin urna dolor
+              sagittis lacus. Morbi ac felis. Fusce vel dui. Proin pretium, leo
+              ac pellentesque mollis, felis nunc ultrices eros, sed gravida
+              augue augue mollis justo. Fusce convallis metus id felis luctus
+              adipiscing. Nullam nulla eros, ultricies sit amet, nonummy id,
+              imperdiet feugiat, pede. Quisque rutrum. Cras sagittis. Nam quam
+              nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Cras non
+              dolor. Aenean commodo ligula eget dolor.
+            </div>
+          </div>
+          <div class="detail__actions">
+            <div class="action" click.delegate="toggleMeasure()">
+              <div class="action__title">
+                <i class="fas fa-balance-scale"></i>Measures
+              </div>
+              <div class="action__icon">${hasMeasure?'-':'+'}</div>
+            </div>
+            <div class="action" click.delegate="toggleStudy()">
+              <div class="action__title">
+                <i class="fas fa-graduation-cap"></i>Learn
+              </div>
+              <div class="action__icon">${hasStudy?'-':'+'}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ux-dialog-body>
+  </ux-dialog>
+</template>

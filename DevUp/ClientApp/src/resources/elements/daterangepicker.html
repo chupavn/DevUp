@@ -1,0 +1,40 @@
+<template>
+    <require from="daterangepicker/daterangepicker.css"></require>
+
+    <!-- <style>
+        .date-range-picker {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .date-range-picker::before {
+            font-family: FontAwesome;
+            content: "\f073";
+            padding-right: 0.5rem;
+            flex: 0 0 auto;
+        }
+        .date-range-picker::after {
+            font-family: FontAwesome;
+            content: "\f0d7";
+            padding-left: 0.5rem;
+            flex: 0 0 auto;
+        }
+
+        .date-range-picker .date-range {
+            flex: 1 1 auto;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+    </style> -->
+
+    <!-- <div class="date-range-picker">
+        <span class="date-range">
+            <time datetime="${startDate}">${startDate}</time>
+            <span>-</span>
+            <time datetime="${endDate}">${endDate}</time>
+        </span>
+    </div> -->
+    <input ref="inputEl" type="text" class="form-control" />
+</template>

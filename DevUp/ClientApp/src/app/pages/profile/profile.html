@@ -1,0 +1,96 @@
+<template>
+  <require from="../../article/article-list-full"></require>
+
+  <section class="main-content">
+    <section class="profile-color"></section>
+    <div class="user-profile-inner">
+      <div class="user-profile__header box">
+        <avatar-img image-src.bind="user.avatarUrl"> </avatar-img>
+        <div class="main-info">
+          <div class="actions">
+            <popover
+              if.bind="state.user.id !== user.id"
+              append-to="parent"
+              placement="bottom-start"
+              popover.bind="popoverEl"
+              hide-on-click.bind="true"
+              focus-first-input.bind="false"
+              offset.bind="[-180,10]"
+              on-hidden.call="null"
+              on-show.call="null"
+            >
+              <button
+                slot="popoverTarget"
+                class="btn actions-item btn--icon"
+                type="button"
+              >
+                <i class="fas fa-ellipsis-h"></i>
+              </button>
+              <div slot="popoverContent" class="popover-form p-1">
+                <ul
+                  class="actions-menu au-animate animate-fade-in animate-fade-out"
+                >
+                  <li class="action__item">
+                    <a href class="action__link">Block</a>
+                  </li>
+                  <li class="action__item">
+                    <a href class="action__link">Report Abuse</a>
+                  </li>
+                </ul>
+              </div>
+            </popover>
+            <button
+              class="btn btn--outline"
+              if.bind="state.user.id !== user.id"
+            >
+              Chat
+            </button>
+            <a
+              href
+              class="btn btn-primary"
+              route-href="route: settings;"
+              if.bind="state.user.id === user.id"
+              >Edit profile</a
+            >
+            <button class="btn btn-primary" else>Follow</button>
+          </div>
+          <div class="user-name">${user.name}</div>
+          <div class="user-bio">${user.bio || '404 bio not found'}</div>
+          <div class="user-meta">
+            <div if.bind="user.location" class="user-meta__item">
+              <i class="fas fa-map-marker-alt icon"></i> ${user.location}
+            </div>
+            <div if.bind="user.registrationDate" class="user-meta__item">
+              <i class="fas fa-birthday-cake icon"></i> Joined on
+              ${user.registrationDate | dateFormat}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="user-profile__body">
+        <div class="left-block">
+          <div class="box">
+            <ul class="info-item stat">
+              <li>
+                <i class="fas fa-file-alt"></i>
+                ${user.articleCount || 0} posts published
+              </li>
+              <li>
+                <i class="far fa-comments"></i>
+                ${user.commentCount} comments written
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="right-block">
+          <div class="articles au-stagger">
+            <article-list-full
+              containerless
+              articles.bind="articles"
+            ></article-list-full>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</template>

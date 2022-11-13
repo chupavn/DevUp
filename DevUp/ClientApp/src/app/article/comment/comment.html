@@ -1,0 +1,204 @@
+<template>
+  <div
+    class="comment au-animate animate-fade-in animate-fade-out"
+    css="padding-left:${comment._level > 1? (comment._level-1)*22 : 0}px"
+  >
+    <div class="user-avatar">
+      <a
+        href
+        route-href="route: user-profile; params.bind: { userId: comment.author.id }"
+      >
+        <!-- <avatar-img if.bind="comment._level > 1"
+                            css-class.bind="'img-child'"
+                            image-src.bind="comment.author.avatarUrl">
+                </avatar-img> -->
+        <!-- <avatar-img else
+                            image-src.bind="comment.author.avatarUrl">
+                </avatar-img> -->
+        <compose
+          view-model="../../components/avatar-img"
+          model.bind="{imageSrc: comment.author.avatarUrl, cssClass: comment._level > 1 ? 'img-child' : ''}"
+          containerless
+        />
+      </a>
+    </div>
+    <div class="d-flex flex-grow-1 flex-column mw-100" if.bind="!editing">
+      <div class="comment-details">
+        <div class="comment-header">
+          <div class="comment-meta">
+            <span class="user-name">
+              <a
+                href
+                route-href="route: user-profile; params.bind: { userId: comment.author.id }"
+                >${comment.author.name}</a
+              >
+              <i
+                tooltip="Author"
+                if.bind="article.author.id === comment.author.id"
+                class="fas fa-feather"
+              ></i
+            ></span>
+            <span class="dot">•</span>
+            <span class="created-date"
+              >${comment.createAt | monthDate:'MMM DD':false}</span
+            >
+            <span if.bind="comment.updateAt" class="dot-darker">•</span>
+            <span if.bind="comment.updateAt" class="created-date"
+              >Edited on ${comment.updateAt | monthDate:'MMM DD':false}</span
+            >
+          </div>
+
+          <popover
+            append-to="parent"
+            placement="bottom-start"
+            popover.bind="popoverEl"
+            hide-on-click.bind="true"
+            focus-first-input.bind="false"
+            offset.bind="[-162,2]"
+            on-hidden.call="null"
+            on-show.call="null"
+          >
+            <button
+              slot="popoverTarget"
+              class="btn comment-actions"
+              type="button"
+            >
+              <i class="fas fa-ellipsis-h"></i>
+            </button>
+            <div slot="popoverContent" class="popover-form p-0">
+              <ul
+                class="actions-menu au-animate animate-fade-in animate-fade-out"
+              >
+                <li class="action__item">
+                  <a href class="action__link">Copy link</a>
+                </li>
+                <li
+                  class="action__item"
+                  if.bind="state.user.id === comment.author.id"
+                >
+                  <a href click.delegate="activeEditing()" class="action__link"
+                    >Edit</a
+                  >
+                </li>
+                <li
+                  class="action__item"
+                  if.bind="state.user.id === comment.author.id"
+                >
+                  <a
+                    href
+                    class="action__link"
+                    click.delegate="deleteHandle({comment})"
+                    >Delete</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </popover>
+        </div>
+
+        <div
+          class="comment-content"
+          innerhtml.bind="comment.content | markDownToHtml | dompurify"
+        ></div>
+      </div>
+      <ul class="external-actions" if.bind="!replying">
+        <li class="action__item">
+          <a
+            href
+            click.delegate="toggleLike()"
+            class="action__link ${comment.isLiked?'liked':''}"
+            ><i class="${comment.isLiked?'fas':'far'} fa-heart icon me-1"></i>
+            <span if.bind="comment.likedCount"
+              >${comment.likedCount} like${comment.likedCount > 1 ? 's' :
+              ''}</span
+            ><span else>Like</span></a
+          >
+        </li>
+        <li class="action__item">
+          <a href click.delegate="activeReplying()" class="action__link"
+            ><i class="far fa-comments me-1"></i> Reply</a
+          >
+        </li>
+      </ul>
+      <div class="reply-area mt-2 mb-3" if.bind="replying">
+        <img-upload show.bind="!previewingReply"></img-upload>
+        <markdown-editor
+          show.bind="!previewingReply"
+          class="au-animate animate-bounce"
+          autofocus.bind="true"
+          content.two-way="replyCommentObject.content"
+          placeholder="Reply..."
+        ></markdown-editor>
+        <template if.bind="previewingReply">
+          <div class="comment-details">
+            <div
+              class="comment-content"
+              innerhtml.bind="replyCommentObject.content | markDownToHtml | dompurify"
+            ></div>
+          </div>
+        </template>
+        <div class="actions mt-3">
+          <button
+            class="btn btn-primary btn--bold"
+            click.delegate="createReply()"
+            disabled.bind="!replyCommentObject.content"
+          >
+            Submit
+          </button>
+          <button
+            type="button"
+            click.delegate="togglePreviewingReply()"
+            class="btn btn-secondary btn--bold"
+            disabled.bind="!replyCommentObject.content"
+          >
+            ${previewingReply?'Continue editing':'Preview'}
+          </button>
+          <button
+            class="btn btn-light btn--bold"
+            click.delegate="cancelReply()"
+          >
+            Dismiss
+          </button>
+        </div>
+      </div>
+    </div>
+    <div if.bind="editing" class="au-animate animate-fade-in flex-grow-1 w-100">
+      <img-upload show.bind="!previewing"></img-upload>
+      <markdown-editor
+        show.bind="!previewing"
+        class="au-animate animate-fade-in"
+        autofocus.bind="true"
+        content.two-way="commentClone.content"
+        placeholder="Add to the discussion"
+      ></markdown-editor>
+      <template if.bind="previewing">
+        <div class="comment-details">
+          <div
+            class="comment-content"
+            innerhtml.bind="commentClone.content | markDownToHtml | dompurify"
+          ></div>
+        </div>
+      </template>
+      <div class="actions mt-3">
+        <button
+          class="btn btn-primary btn--bold"
+          click.delegate="save()"
+          disabled.bind="!commentClone.content"
+        >
+          Submit
+        </button>
+        <button
+          type="button"
+          click.delegate="togglePreviewing()"
+          class="btn btn-secondary btn--bold"
+          disabled.bind="!commentClone.content"
+        >
+          ${previewing?'Continue editing':'Preview'}
+        </button>
+        <button class="btn btn-light btn--bold" click.delegate="cancelEdit()">
+          Dismiss
+        </button>
+      </div>
+    </div>
+  </div>
+</template>

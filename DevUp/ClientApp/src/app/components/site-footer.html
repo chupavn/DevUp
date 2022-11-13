@@ -1,0 +1,77 @@
+<template>
+    <div class="site-footer">
+        <ul class="footer-nav">
+            <li class="nav__item">
+                <a href="#"
+                   class="nav__link">
+                    Home
+                </a>
+            </li>
+            <li class="nav__item"
+                if.bind="state.auth.loggedIn">
+                <a href
+                   route-href='route: reading-list;'
+                   class="nav__link">
+                    Reading List
+                </a>
+            </li>
+            <li class="nav__item">
+                <a href
+                   route-href='route: tags;'
+                   class="nav__link">
+                    Tags
+                </a>
+            </li>
+            <li class="nav__item"
+                if.bind="!state.auth.loggedIn">
+                <a href
+                   click.delegate="login()"
+                   class="nav__link nav__link--bold">
+                    Sign In/Up
+                </a>
+            </li>
+            <li class="nav__item"
+                if.bind="state.auth.loggedIn">
+                <a href
+                   route-href='route: new-article;'
+                   class="nav__link nav__link--bold">
+                    Create Post
+                </a>
+            </li>
+            <li class="nav__item">
+                <a href
+                   route-href='route: about;'
+                   class="nav__link">
+                    About
+                </a>
+            </li>
+        </ul>
+        <div class="site-intro">
+            <section>
+                <a href="#"
+                   class="link--bold">DEV Community</a> – A constructive and inclusive social network for software
+                developers. With
+                you every step
+                of your journey.
+            </section>
+            <section>
+                <div>
+                    Made with love,
+                    <a href
+                       class="link--bold"
+                       route-href="route: articles-by-tag; params.bind: { tagName: 'netcore' }">NetCore</a>
+                    and
+                    <a href
+                       class="link--bold"
+                       route-href="route: articles-by-tag; params.bind: { tagName: 'aurelia' }">Aurelia</a>
+                    . DEV
+                    Community
+                    © 2020 - 2021.
+                </div>
+            </section>
+            <section class="sponsors">
+                <i class="fab fa-pagelines"></i>
+            </section>
+        </div>
+    </div>
+</template>

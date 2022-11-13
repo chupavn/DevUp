@@ -1,0 +1,98 @@
+<template>
+  <div class="site-header">
+    <div class="site-header-wrapper">
+      <div class="site-header__left">
+        <a class="site-title" href="#">DEVUP</a>
+        <input
+          class="search-box d-none d-md-block"
+          placeholder="Search..."
+          value.bind="q"
+          on-enter.call="goToSearchResults()"
+          type="text"
+        />
+      </div>
+      <div class="site-header__right">
+        <a
+          href
+          click.delegate="login()"
+          class="btn btn--ghost btn-link btn--bold me-2"
+          if.bind="!state.auth.loggedIn"
+          >Log in</a
+        >
+        <button
+          click.delegate="register()"
+          class="btn btn-primary btn--bold"
+          if.bind="!state.auth.loggedIn"
+        >
+          Create account
+        </button>
+        <a
+          href
+          route-href="route: new-article;"
+          class="btn btn-primary btn--bold"
+          if.bind="state.auth.loggedIn"
+          >Create post</a
+        >
+
+        <popover
+          if.bind="state.auth.loggedIn"
+          append-to="parent"
+          trigger="mouseenter focus"
+          placement="bottom-end"
+          offset.bind="[0,0]"
+          interactive-debounce.bind="0"
+          popover.bind="popoverEl"
+          hide-on-click.bind="true"
+          focus-first-input.bind="false"
+          on-hidden.call="null"
+          on-show.call="null"
+        >
+          <button slot="popoverTarget" class="btn user-actions" type="button">
+            <avatar-img image-src.bind="state.user.avatarUrl"></avatar-img>
+          </button>
+          <div slot="popoverContent" class="popover-form p-0">
+            <ul class="user-actions__list">
+              <li class="action__item">
+                <a
+                  href
+                  route-href="route: user-profile; params.bind: { userId: state.user.id }"
+                  class="action__link"
+                >
+                  <div class="user-name">${state.user.name}</div>
+                  <div class="sub-info">${state.user.email}</div>
+                </a>
+              </li>
+              <hr />
+              <li class="action__item">
+                <a href route-href="route: dashboard;" class="action__link"
+                  >Dashboard</a
+                >
+              </li>
+              <li class="action__item">
+                <a href route-href="route: new-article;" class="action__link"
+                  >Create Post</a
+                >
+              </li>
+              <li class="action__item">
+                <a href route-href="route: reading-list;" class="action__link"
+                  >Reading list</a
+                >
+              </li>
+              <li class="action__item">
+                <a href route-href="route: settings" class="action__link"
+                  >Settings</a
+                >
+              </li>
+              <hr />
+              <li class="action__item">
+                <a href click.delegate="signOut()" class="action__link"
+                  >Sign out
+                </a>
+              </li>
+            </ul>
+          </div>
+        </popover>
+      </div>
+    </div>
+  </div>
+</template>

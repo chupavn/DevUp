@@ -1,0 +1,16 @@
+<template>
+    <div class="article__tags">
+        <a if.bind="showColor"
+           href
+           route-href='route: articles-by-tag; params.bind: { tagName: tag.name }'
+           class="tag has-border"
+           css="background-color:${tag.backGroundColorHex};color:${tag.textColorHex}"
+           repeat.for="tag of tags">${tag.name | tagName}</a>
+        <a else
+           href
+           route-href='route: articles-by-tag; params.bind: { tagName: tag.name }'
+           class="tag"
+           repeat.for="tag of tags">${tag.name | tagName}
+        </a>
+    </div>
+</template>

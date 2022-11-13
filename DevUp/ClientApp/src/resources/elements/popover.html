@@ -1,0 +1,16 @@
+<template>
+    <div ref="target">
+        <slot name="popoverTarget">
+            <button class="btn">Btn</button>
+        </slot>
+    </div>
+    <div ref="template">
+        <slot name="popoverContent">
+            <div class="popover" role="tooltip">
+                <div class="arrow"></div>
+                <h3 class="popover-title"></h3>
+                <div class="popover-content"></div>
+            </div>
+        </slot>
+    </div>
+</template>

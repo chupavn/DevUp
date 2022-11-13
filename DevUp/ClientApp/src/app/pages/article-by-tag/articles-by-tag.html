@@ -1,0 +1,88 @@
+<template>
+    <require from="../../article/article-list-full"></require>
+
+    <section class="main-content">
+        <div class="main-content-wrapper article-by-tag ">
+            <div class="tag-intro box box--no-padding">
+                <div class="tag-intro__color"
+                     css="background-color:${tag.backGroundColorHex};"></div>
+                <div class="tag-intro__content">
+                    <div class="tag-intro__content__header">
+                        <div class="tag__title">${tag.name | upperFirst}</div>
+                        <button if.bind="!tag.followed"
+                                class="btn btn-primary btn--bold"
+                                click.delegate="followTag(tag)">Follow</button>
+                        <button if.bind="tag.followed"
+                                class="btn btn--outline btn--bold"
+                                click.delegate="unFollowTag(tag)">Following</button>
+                    </div>
+                    <div class="tag-intro__content__des"
+                         if.bind="tag.description">
+                        ${tag.description}
+                    </div>
+                </div>
+            </div>
+            <div class="content-wrapper row">
+                <div class="left-side col-md-2">
+                    <div class="title mb-2">tag moderators</div>
+                    <section id="carousel"
+                             class="flicking-viewport">
+                        <div class="flicking-camera">
+                            <a href
+                               repeat.for="m of moderators"
+                               class="panel me-2">
+                                <avatar-img size.bind="50"
+                                            image-src.bind="m.imageSrc">
+                                </avatar-img>
+                            </a>
+                        </div>
+                    </section>
+                    <hr>
+                    <div class="post-count">${tag.postCount} Posts Published</div>
+                </div>
+                <div class="main-side col">
+                    <div class="main-side-header">
+                        <h3>Posts</h3>
+                        <ul class="menu-side-menu">
+                            <li click.delegate="setTopBy('')"
+                                class="menu-item ${!topBy? 'active' : ''}">
+                                <a href
+                                   class="item-link">Feed</a>
+                            </li>
+                            <li click.delegate="setTopBy('week')"
+                                class="menu-item ${topBy === 'week' ? 'active' : ''}">
+                                <a href
+                                   class="item-link">Week</a>
+                            </li>
+                            <li click.delegate="setTopBy('month')"
+                                class="menu-item ${topBy === 'month' ? 'active' : ''}">
+                                <a href
+                                   class="item-link">Month</a>
+                            </li>
+                            <li click.delegate="setTopBy('year')"
+                                class="menu-item ${topBy === 'year' ? 'active' : ''}">
+                                <a href
+                                   class="item-link">Year</a>
+                            </li>
+                            <li click.delegate="setTopBy('infinity')"
+                                class="menu-item ${topBy === 'infinity' ? 'active' : ''}">
+                                <a href
+                                   class="item-link">Infinity</a>
+                            </li>
+                            <li click.delegate="setTopBy('latest')"
+                                class="menu-item ${topBy === 'latest' ? 'active' : ''}">
+                                <a href
+                                   class="item-link">Latest</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="articles au-stagger"
+                         infinite-scroll="callback.call: getData();is-active: !getting && hasNextPage">
+                        <article-list-full articles.bind="articles"></article-list-full>
+                    </div>
+                </div>
+                <div class="right-side col"></div>
+            </div>
+        </div>
+    </section>
+</template>

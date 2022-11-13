@@ -1,0 +1,40 @@
+<template>
+
+    <div class="people-item-full au-animate animate-fade-in"
+         repeat.for="people of peoples">
+        <div class="people-inner">
+            <div class="people-header">
+                <a href
+                   route-href='route: user-profile; params.bind: { userId: people.id }'>
+                    <avatar-img class="me-2"
+                                image-src.bind="people.avatarUrl"></avatar-img>
+                </a>
+
+                <div class="info">
+                    <a href
+                       route-href='route: user-profile; params.bind: { userId: people.id }'
+                       class="author-name">${people.name}</a>
+                </div>
+            </div>
+            <div class="people-body">
+                <div class="people">
+                    <a href
+                       route-href='route: user-profile; params.bind: { userId: people.id }'>
+                        ${people.bio || '404 bio not found'}
+                    </a>
+                </div>
+                <div class="people-body__footer">
+                    <div>
+                        <button if.bind="!people.isFollowing"
+                                click.delegate="followPeople(people)"
+                                class="btn">Follow</button>
+                        <button if.bind="people.isFollowing"
+                                click.delegate="unFollowPeople(people)"
+                                class="btn">Following</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</template>

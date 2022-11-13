@@ -1,0 +1,27 @@
+<template>
+  <div class="page-header mt-4">
+    <h4>Quizzes</h4>
+  </div>
+
+  <div class="page-actions mt-4 mb-2">
+    <div class="btn btn-primary m-auto">New Quiz</div>
+  </div>
+
+  <div class="quiz-list mt-4 au-stagger">
+    <div
+      class="quiz__item mb-2 au-animate animate-fade-in"
+      repeat.for="quiz of quizzes"
+      click.delegate="openQuestions(quiz)"
+    >
+      <div class="quiz__title">${quiz.title}</div>
+      <div class="quiz__actions">
+        <button
+          class="btn btn-light"
+          click.delegate="openQuizDetail($event, quiz)"
+        >
+          <i class="fas fa-cog"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</template>

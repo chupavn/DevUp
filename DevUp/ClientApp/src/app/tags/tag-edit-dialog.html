@@ -1,0 +1,66 @@
+<template>
+    <style>
+        .tag-edit-dialog {
+            min-width: 500px;
+        }
+    </style>
+    <ux-dialog class="tag-edit-dialog">
+        <ux-dialog-header>
+            <h4>Edit ${tag.name | tagName}</h4>
+        </ux-dialog-header>
+        <ux-dialog-body>
+
+            <div class="mb-3">
+                <label class="form-label">Preview</label>
+                <div class="preview text-center p-2 rounded"
+                     css="background-color:${tag.backGroundColorHex ? tag.backGroundColorHex : '#dee2e6'};color:${tag.textColorHex}">
+                    ${tag.name | tagName}
+                </div>
+            </div>
+
+            <form submit.trigger="save()">
+                <div class="mb-3">
+                    <label for="name"
+                           class="form-label">Name</label>
+                    <input value.bind="tag.name"
+                           type="text"
+                           class="form-control"
+                           id="name">
+                </div>
+                <div class="mb-3">
+                    <label for="description"
+                           class="form-label">Description</label>
+                    <textarea value.bind="tag.description"
+                              name=""
+                              id="description"
+                              cols="30"
+                              rows="4"
+                              class="form-control"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="backGroundColorHex"
+                           class="form-label">BackGroundColorHex</label>
+                    <input value.bind="tag.backGroundColorHex"
+                           type="color"
+                           class="form-control form-control-color"
+                           id="backGroundColorHex">
+                </div>
+                <div class="mb-3">
+                    <label for="textColorHex"
+                           class="form-label">TextColorHex</label>
+                    <input value.bind="tag.textColorHex"
+                           type="color"
+                           class="form-control form-control-color"
+                           id="textColorHex">
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit"
+                            class="btn btn-primary btn--bold">Save</button>
+                    <button class="btn btn-secondary btn--bold"
+                            click.delegate="cancel()">Cancel</button>
+                </div>
+            </form>
+        </ux-dialog-body>
+    </ux-dialog>
+</template>

@@ -1,0 +1,72 @@
+<template>
+    <div class="main-content">
+        <br>
+        <div class="content-inner box enter-form">
+            <h3 class="text-center">
+                Welcome to DEV Community
+            </h3>
+            <!-- <div class="d-grid gap-2 mt-4">
+                <button type="button"
+                        class="btn btn--facebook btn--bold"><i class="fab fa-facebook me-2"></i>Continue with
+                    Facebook</button>
+                <button type="button"
+                        class="btn btn--google btn--bold"><i class="fab fa-google me-2"></i>Continue with
+                    Google</button>
+            </div>
+            <hr> -->
+            <form submit.trigger="submit()">
+                <div class="mb-3">
+                    <label for="exampleInputEmail1"
+                           class="form-label">Email</label>
+                    <input value.bind="user.email"
+                           type="email"
+                           class="form-control"
+                           required
+                           id="exampleInputEmail1"
+                           aria-describedby="emailHelp">
+                </div>
+                <div class="mb-3">
+                    <label for="exampleInputPassword1"
+                           class="form-label">Password</label>
+                    <input value.bind="user.password"
+                           type="password"
+                           class="form-control"
+                           required
+                           id="exampleInputPassword1">
+                </div>
+                <div class="mb-3"
+                     if.bind="state==='new-user'">
+                    <label for="exampleInputConfirmPassword1"
+                           class="form-label">Confirm Password</label>
+                    <input value.bind="user.confirmPassword"
+                           type="password"
+                           class="form-control"
+                           required
+                           id="exampleInputConfirmPassword1">
+                </div>
+
+                <div if.bind="errMessage">
+                    <div class="alert alert-danger"
+                         role="alert">
+                        ${errMessage}
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit"
+                            class="btn btn-primary btn--bold">Continue</button>
+                    <button if.bind="!state"
+                            click.delegate="forgotPassword()"
+                            class="btn btn-link mt-3">I forgot my password</button>
+                    <div class="text-center mt-2"
+                         if.bind="state==='new-user'">
+                        Already have an account? <a href
+                           click.delegate="toLoginPage()">View more sign in options.</a>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+        <br>
+    </div>
+</template>

@@ -1,0 +1,70 @@
+<template>
+    <div class="dashboard-articles box">
+        <div class="article" repeat.for="article of articles">
+            <div
+                style="
+                    width: 60%;
+                    display: flex;
+                    flex-wrap: nowrap;
+                    justify-content: space-between;
+                "
+            >
+                <div class="article__title">
+                    <a
+                        href
+                        route-href="route: article-details; params.bind: { id: article._slugId }"
+                        >${article.title}</a
+                    >
+                </div>
+                <div class="article__status">
+                    <span
+                        class="
+                            badge
+                            rounded-pill
+                            bg-${article.isPublished?'success':'primary'}
+                        "
+                        >${article.isPublished?'Published':'Draft'}</span
+                    >
+                </div>
+            </div>
+            <div class="d-flex flex-nowrap">
+                <popover
+                    append-to="parent"
+                    placement="bottom-start"
+                    arrow.bind="false"
+                    popover.bind="popoverEl"
+                    hide-on-click.bind="true"
+                    focus-first-input.bind="false"
+                    offset.bind="[0,10]"
+                    on-hidden.call="null"
+                    on-show.call="null"
+                >
+                    <button
+                        slot="popoverTarget"
+                        class="btn btn--ghost btn--red"
+                    >
+                        Delete
+                    </button>
+
+                    <div slot="popoverContent" class="popover-form p-4">
+                        <div>
+                            <span
+                                >Are you sure want to delete this article?</span
+                            >
+                        </div>
+                        <div class="mt-4">
+                            <button class="btn btn-danger me-1">Delete</button>
+                            <button class="btn btn-secondary">Cancel</button>
+                        </div>
+                    </div>
+                </popover>
+                <button
+                    class="btn btn--ghost"
+                    click.delegate="editArticle(article)"
+                >
+                    Edit
+                </button>
+            </div>
+        </div>
+    </div>
+</template>

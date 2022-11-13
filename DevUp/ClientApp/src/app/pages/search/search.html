@@ -1,0 +1,64 @@
+<template>
+    <require from="../../article/article-list-full"></require>
+    <require from="./peoples"></require>
+
+    <section class="main-content">
+        <div class="search-result-inner">
+            <div class="search-result__header">
+                <h3 class="header-text">Search results</h3>
+                <!-- Filter Menu -->
+                <ul class="menu-side-menu">
+                    <li click.delegate="setSortBy(null, null)"
+                        class="menu-item ${!sortBy? 'active' : ''}">
+                        <a href
+                           class="item-link">Most Relevant</a>
+                    </li>
+                    <li click.delegate="setSortBy('published_at', 'desc')"
+                        class="menu-item ${sortBy === 'published_at' && sortDirection === 'desc' ? 'active' : ''}">
+                        <a href
+                           class="item-link">Newest</a>
+                    </li>
+                    <li click.delegate="setSortBy('published_at', 'asc')"
+                        class="menu-item ${sortBy === 'published_at' && sortDirection === 'asc' ? 'active' : ''}">
+                        <a href
+                           class="item-link">Oldest</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="search-result__body pt-2">
+                <div class="left-block">
+                    <div>
+                        <ul class="menu-gray">
+                            <a href
+                               click.delegate="setFilters('allArticles')"
+                               class="menu-gray__item ${!filters || filters==='allArticles'? 'active' : ''}">
+                                <span class="item-name">Posts</span>
+                            </a>
+                            <a if.bind="state.auth.loggedIn"
+                               href
+                               click.delegate="setFilters('myArticles')"
+                               class="menu-gray__item ${filters==='myArticles'? 'active' : ''}">
+                                <span class="item-name">My posts only</span>
+                            </a>
+                            <a href
+                               click.delegate="setFilters('people')"
+                               class="menu-gray__item ${filters==='people'? 'active' : ''}">
+                                <span class="item-name">People</span>
+                            </a>
+                        </ul>
+                    </div>
+                </div>
+                <div class="right-block">
+                    <div class="articles">
+                        <article-list-full if.bind="filters !== 'people'"
+                                           containerless
+                                           articles.bind="articles"></article-list-full>
+                        <peoples if.bind="filters === 'people'"
+                                 containerless
+                                 peoples.bind="peoples"></peoples>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</template>

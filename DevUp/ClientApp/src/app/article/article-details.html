@@ -1,0 +1,217 @@
+<template>
+    <require from="./article-by-author-simple"></require>
+    <require from="./tags"></require>
+    <require from="./comment/comment"></require>
+
+    <div class="main-content">
+        <div class="main-content-wrapper article-detail-page au-animate animate-fade-in"
+             if.bind="ready">
+            <div class="article-detail-page__main">
+                <div class="reactions">
+                    <div click.delegate="toggleLike()"
+                         class="actions-item like ${article.isLiked?'active':''}">
+                        <i class="${article.isLiked?'fas':'far'} fa-heart icon"></i>
+                        <div class="count">${article.likedCount}</div>
+                    </div>
+                    <div click.delegate="toggleReadingList()"
+                         class="actions-item bookmark ${article.isReadingList?'active':''}">
+                        <i class="${article.isReadingList?'fas':'far'} fa-bookmark icon"></i>
+                        <div class="count">${article.readingListCount}</div>
+                    </div>
+                    <popover append-to="parent"
+                             placement="right-start"
+                             arrow.bind="false"
+                             popover.bind="popoverEl"
+                             hide-on-click.bind="true"
+                             focus-first-input.bind="false"
+                             offset.bind="[0,10]"
+                             on-hidden.call="null"
+                             on-show.call="null">
+                        <button slot="popoverTarget"
+                                class="btn actions-item"
+                                type="button"><i class="fas fa-ellipsis-h icon icon--menu-context"></i></button>
+                        <div slot="popoverContent"
+                             class="popover-form p-1">
+                            <ul class="actions-menu au-animate animate-fade-in animate-fade-out">
+                                <li class="action__item">
+                                    <a href
+                                       click.delegate="copyToClipboard(currentURL)"
+                                       class="action__link">Copy link</a>
+                                </li>
+                                <li class="action__item">
+                                    <a href="https://facebook.com/sharer.php?display=page&u=${currentURL}"
+                                       target="_blank"
+                                       class="action__link">Share to Facebook</a>
+                                </li>
+                                <li class="action__item"
+                                    if.bind="state.user.id === article.author.id">
+                                    <a href
+                                       click.delegate="editArticle(article)"
+                                       class="action__link">Edit</a>
+                                </li>
+                                <li class="action__item"
+                                    if.bind="state.user.id === article.author.id">
+                                    <a href
+                                       class="action__link"
+                                       click.delegate="deleteHandle(article)">Delete</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </popover>
+                </div>
+                <div class="article-detail">
+                    <img if.bind="article.coverImageUrl"
+                         class="article-cover"
+                         src.bind="article.coverImageUrl"
+                         onerror="this.src='https://picsum.photos/900/300';"
+                         alt="">
+                    <div class="article">
+                        <div class="article-title mb-4">${article.title}</div>
+                        <div class="tags">
+                            <tags tags.bind="article.tags"
+                                  show-color.bind="true"></tags>
+                        </div>
+                        <div class="meta-info">
+                            <avatar-img class="me-2"
+                                        image-src.bind="article.author.avatarUrl"></avatar-img>
+                            <a href
+                               route-href='route: user-profile; params.bind: { userId: article.author.id }'
+                               class="author__name">
+                                ${article.author.name}
+                            </a>
+                            <div class="created-date">
+                                ${article.createAt | monthDate}
+                            </div>
+                            <div class="separate-dot"> • </div>
+                            <div class="read-time">
+                                ${article.content | readingTime} min read
+                            </div>
+                        </div>
+                        <div class="article-content"
+                             innerhtml.bind="article.content | markDownToHtml | dompurify">
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="article-comment"
+                         ref="commentAreaEl">
+                        <h2 class="comment-area-title">Discussion<span
+                                  if.bind="article.comments && article.comments.length > 0">
+                                (${article.comments.length})</span></h2>
+                        <div class="comment-new">
+                            <div class="user-avatar">
+                                <avatar-img containerless
+                                            image-src.bind="state.user.avatarUrl"
+                                            size.bind="30"></avatar-img>
+                                </avatar-img>
+                            </div>
+                            <form class="comment-new-form"
+                                  submit.trigger="saveNewComment()">
+                                <div show.bind="!previewingNewComment"
+                                     class="mb-3">
+                                    <img-upload show.bind="newCommentActive"></img-upload>
+                                    <markdown-editor class="au-animate animate-fade-in"
+                                                     show.bind="newCommentActive"
+                                                     autofocus.bind="true"
+                                                     content.two-way="newComment.content"
+                                                     placeholder="Add to the discussion"></markdown-editor>
+                                    <textarea show.bind="!newCommentActive"
+                                              click.delegate="activeNewCommentForm($event)"
+                                              disabled
+                                              placeholder="Add to the discussion"
+                                              class="form-control mask-editor"></textarea>
+                                </div>
+
+                                <div show.bind="previewingNewComment"
+                                     class="comment-new-preview">
+                                    <span innerhtml.bind="newComment.content | markDownToHtml | dompurify"></span>
+                                </div>
+
+                                <div class="actions"
+                                     show.bind="newCommentActive">
+                                    <button type="submit"
+                                            class="btn btn-primary btn--bold"
+                                            disabled.bind="!newComment.content || !newComment.articleId">Submit</button>
+                                    <button type="button"
+                                            click.delegate="togglePreviewNewComment()"
+                                            class="btn btn-secondary btn--bold"
+                                            disabled.bind="!newComment.content || !newComment.articleId">${previewingNewComment?'Continue
+                                        editing':'Preview'}
+                                    </button>
+                                    <button class="btn btn-dark btn--bold"
+                                            click.delegate="cancelNewComment()"
+                                            if.bind="newComment.content && !previewingNewComment">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="comments">
+                            <template repeat.for="comment of article.comments">
+                                <comment class="au-animate animate-fade-in animate-fade-out"
+                                         comment.two-way="comment"
+                                         article.bind="article"
+                                         save-handle.call="saveEditComment(commentClone)"
+                                         delete-handle.call="deleteComment(comment)"
+                                         save-reply-handle.call="saveReply(replyCommentObject)">
+                                </comment>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="author-info article-detail-page__right">
+                <div class="author-meta box">
+                    <div class="header-color"></div>
+                    <div class="author-info-main">
+                        <avatar-img containerless
+                                    size.bind="48"
+                                    image-src.bind="article.author.avatarUrl">
+                        </avatar-img>
+                        <div class="author-name">${article.author.name}</div>
+                    </div>
+                    <div class="author-body">
+                        <div class="bio">
+                            ${article.author.bio}
+                        </div>
+                        <div class="d-grid gap-2 mt-3 mb-3">
+                            <button class="btn btn-primary btn--bold"
+                                    click.delegate="followAuthor(article.author)"
+                                    if.bind="state.user.id !== article.author.id">Follow</button>
+                            <a href
+                               class="btn btn-primary"
+                               click.delegate="editProfile()"
+                               route-href='route: settings;'
+                               if.bind="state.user.id === article.author.id">Edit profile</a>
+                        </div>
+                        <div if.bind="article.author.work"
+                             class="sub-section">
+                            <div class="title">Work</div>
+                            <div class="description">${article.author.work | emptyDash}</div>
+                        </div>
+                        <div if.bind="article.author.location"
+                             class="sub-section">
+                            <div class="title">Location</div>
+                            <div class="description">${article.author.location | emptyDash}</div>
+                        </div>
+                        <div if.bind="article.author.education"
+                             class="sub-section">
+                            <div class="title">Education</div>
+                            <div class="description">${article.author.education | emptyDash}</div>
+                        </div>
+                        <div if.bind="article.author.registrationDate"
+                             class="sub-section">
+                            <div class="title">Joined</div>
+                            <div class="description">${article.author.registrationDate | dateFormat | emptyDash}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="author-more box">
+                    <article-by-author-simple author-id.bind="article.author.id"
+                                              author.bind="article.author"></article-by-author-simple>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</template>

@@ -1,0 +1,16 @@
+<template>
+    <require from="./article-simple-list"></require>
+
+    <div class="box">
+        <div class="box__header">
+            <div class="title">More from <a class="author-name"
+                   href
+                   route-href='route: user-profile; params.bind: { userId: author.id }'>${author.name}</a>
+            </div>
+        </div>
+
+        <article-simple-list articles.bind="articles"
+                             show-tags.bind="true">
+        </article-simple-list>
+    </div>
+</template>

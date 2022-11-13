@@ -1,0 +1,28 @@
+<template>
+    <ux-dialog class="entry-dialog relative-dialog">
+        <ux-dialog-header>
+            <button class="btn btn--icon button-close-dialog"
+                    click.delegate="dialogController.cancel()">
+                <i class="fa fa-times"></i>
+            </button>
+            <h4 class="title">
+                Log in to continue
+            </h4>
+        </ux-dialog-header>
+        <ux-dialog-body>
+            <div class="dev-logo">DEV</div>
+            <p class="text-info-main">We're a place where coders share, stay up-to-date and grow their careers.</p>
+            <div class="d-grid gap-2 mt-4 mb-3 p4">
+                <button class="btn btn-primary btn--bold"
+                        click.delegate="gotoLogin()">Login</button>
+                <button class="btn btn-link btn--ghost btn--bold"
+                        click.delegate="gotoRegister()">Create new account</button>
+            </div>
+        </ux-dialog-body>
+        <ux-dialog-footer>
+            <div class="text-center">
+                <span class="text-info-footer">We strive for transparency and don't collect excess data.</span>
+            </div>
+        </ux-dialog-footer>
+    </ux-dialog>
+</template>

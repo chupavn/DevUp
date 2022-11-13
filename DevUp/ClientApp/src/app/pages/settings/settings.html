@@ -1,0 +1,124 @@
+<template>
+    <section class="main-content settings px-2">
+        <div class="setting-content-wrapper">
+            <section class="pt-2">
+                <h2 class="mt-4">Settings for ${state.user.name}</h2>
+            </section>
+
+            <aside style="max-width: 736px">
+                <div class="box p-4 mt-4">
+                    <div class="mb-4">
+                        <h4>User</h4>
+                    </div>
+                    <div class="mb-3" validation-renderer="form">
+                        <label class="form-label">Name</label>
+                        <input
+                            value.bind="user.name & validateManually"
+                            type="text"
+                            class="form-control"
+                        />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input
+                            value.bind="user.email"
+                            type="text"
+                            class="form-control"
+                        />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Phone</label>
+                        <input
+                            value.bind="user.phone"
+                            inputmask-custom-attribute="999-999-999"
+                            type="text"
+                            class="form-control"
+                        />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Birthday</label>
+                        <datepicker
+                            date.bind="user.birthDay"
+                            inline.bind="false"
+                            show-week-number.bind="true"
+                        ></datepicker>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Date range</label>
+                        <datepicker-range
+                            date-start.bind="user.dateStart"
+                            date-end.bind="user.dateEnd"
+                            show-custom.bind="true"
+                        ></datepicker-range>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Date range 1</label>
+                        <daterangepicker
+                            start-date.bind="user.dateStart"
+                            end-date.bind="user.dateEnd"
+                        ></daterangepicker>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Gender</label>
+                        <select class="form-select">
+                            <option value=""></option>
+                            <option value="1">Male</option>
+                            <option value="2">Female</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Profile image</label>
+                        <div class="d-flex gap-2">
+                            <a
+                                href
+                                tooltip="Click to change"
+                                click.delegate="showUploadAvatarForm()"
+                            >
+                                <avatar-img
+                                    if.bind="file"
+                                    image-src.bind="file | blobToUrl"
+                                >
+                                </avatar-img>
+                                <avatar-img
+                                    else
+                                    image-src.bind="user.avatarUrl"
+                                >
+                                </avatar-img>
+                            </a>
+
+                            <input
+                                files.bind="files"
+                                type="file"
+                                accept="image/*"
+                                class="form-control"
+                                ref="avatarFileEl"
+                                change.delegate="filesChanged()"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box p-4">
+                    <div class="gap-3 d-grid d-md-block">
+                        <button
+                            class="btn btn-primary btn--bold"
+                            click.delegate="save()"
+                        >
+                            Save Profile Information
+                        </button>
+                        <button
+                            class="btn btn-secondary btn--bold"
+                            click.delegate="cancel()"
+                        >
+                            Revert New Changes
+                        </button>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </section>
+</template>

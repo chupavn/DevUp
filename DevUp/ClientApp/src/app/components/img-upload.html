@@ -1,0 +1,38 @@
+<template>
+  <div class="img-upload-wrapper">
+    <button
+      class="btn button"
+      disabled.bind="uploading"
+      click.delegate="showUploadForm()"
+    >
+      <i if.bind="!uploading" class="far fa-image me-1"></i>
+      <span
+        if.bind="uploading"
+        class="spinner-border spinner-border-sm"
+        role="status"
+        aria-hidden="true"
+      ></span>
+      <span class="button-text"> ${uploading?'Uploading':'Upload'} </span>
+    </button>
+    <input
+      type="text"
+      value.bind="imgUrl"
+      class="form-control"
+      ref="imgUrlEl"
+      readonly
+    />
+    <button class="btn button" click.delegate="copyUrl()">
+      <i class="far fa-copy me-1"></i>
+      <span class="button-text"> ${copied?'Copied':'Copy'} </span>
+    </button>
+
+    <input
+      type="file"
+      files.bind="files"
+      ref="fileInputEl"
+      accept="image/*"
+      change.delegate="uploadImg()"
+      hidden
+    />
+  </div>
+</template>

@@ -1,0 +1,20 @@
+<template>
+  <div class="datepicker-container" show.bind="!inline">
+    <input
+      type="text"
+      class="form-control"
+      ref="inputEl"
+      t="[placeholder]${placeholder}"
+    />
+    <i
+      if.bind="date"
+      class="fa fa-times clear-icon"
+      click.delegate="clearPicker($event)"
+    ></i>
+    <i
+      class="far fa-calendar date-icon"
+      click.delegate="showPicker($event)"
+    ></i>
+  </div>
+  <div ref="calendarContainerEl"></div>
+</template>

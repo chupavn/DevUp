@@ -1,0 +1,24 @@
+<template>
+  <!-- <require from="../node_modules/pikaday/css/theme.css"></require> -->
+  <require from="./header/header"></require>
+  <require from="./components/site-footer"></require>
+
+  <div id="toptop" hidden></div>
+  <div class="app">
+    <div class="app__content app__content__header">
+      <div class="app__content__inner">
+        <header containerless></header>
+      </div>
+    </div>
+    <div class="app__content app__content__main">
+      <div class="app__content__inner">
+        <router-view containerless></router-view>
+        <site-footer containerless></site-footer>
+      </div>
+    </div>
+  </div>
+
+  <a href click.delegate="scrollTop()" class="scroll-top"
+    ><i class="fas fa-arrow-alt-circle-up"></i
+  ></a>
+</template>

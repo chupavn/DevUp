@@ -1,0 +1,208 @@
+<template>
+    <require from="./tags"></require>
+
+    <div class="main-content">
+        <div class="main-content-wrapper row">
+            <div class="editor-wrapper">
+                <div class="editor-header">
+                    <ul class="menu-side-menu">
+                        <li
+                            click.delegate="activeEditor()"
+                            class="
+                                menu-item
+                                ${editorState
+                                ===
+                                'editor'?
+                                'active'
+                                :
+                                ''}
+                            "
+                        >
+                            <a href class="item-link">Edit</a>
+                        </li>
+                        <li
+                            click.delegate="preview()"
+                            class="
+                                menu-item
+                                ${editorState
+                                ===
+                                'preview'
+                                ?
+                                'active'
+                                :
+                                ''}
+                            "
+                        >
+                            <a href class="item-link">Preview</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div
+                    class="editor-main-content-wrapper"
+                    show.bind="editorState === 'editor'"
+                >
+                    <div show.bind="editorState === 'editor'">
+                        <div class="cover-image mb-3">
+                            <button
+                                if.bind="!article.coverImageUrl || uploadingCover"
+                                click.delegate="showPickFileForm()"
+                                class="btn btn--outline btn--bold"
+                                disabled.bind="uploadingCover"
+                            >
+                                <span
+                                    if.bind="uploadingCover"
+                                    class="spinner-border spinner-border-sm"
+                                    role="status"
+                                    aria-hidden="true"
+                                ></span>
+                                <span if.bind="uploadingCover">Uploading</span>
+                                <span if.bind="!uploadingCover"
+                                    >Add a cover image</span
+                                >
+                            </button>
+                            <div
+                                else
+                                class="
+                                    cover-preview
+                                    d-flex
+                                    align-items-center
+                                    gap-2
+                                "
+                            >
+                                <img
+                                    src.bind="article.coverImageUrl"
+                                    class="cover-preview__img"
+                                    alt=""
+                                />
+                                <button
+                                    click.delegate="changeCoverImg()"
+                                    class="btn btn--outline btn--bold"
+                                >
+                                    Change
+                                </button>
+                                <button
+                                    click.delegate="removeCoverImg()"
+                                    class="btn btn--ghost btn--red btn--bold"
+                                >
+                                    Remove
+                                </button>
+                            </div>
+                            <input
+                                type="file"
+                                files.bind="coverFiles"
+                                accept="image/*"
+                                ref="coverFileEl"
+                                change.delegate="uploadCoverImg()"
+                                hidden
+                            />
+                        </div>
+                        <textarea
+                            ref="titleEl"
+                            rows="1"
+                            class="article-title mb-4"
+                            value.bind="article.title"
+                            maxlength="150"
+                            placeholder="New post title here..."
+                        ></textarea>
+                        <!-- <div class="editor" id="editor" ref="editorEl"></div> -->
+                        <div class="au-tags mb-4">
+                            <au-tagify
+                                tag-text-prop="name"
+                                value.bind="article.tags"
+                                max-tags.bind="4"
+                                whitelist.bind="allTagNames"
+                                placeholder="Add up to 4 tags..."
+                            ></au-tagify>
+                        </div>
+
+                        <div class="mb-4">
+                            <img-upload></img-upload>
+                        </div>
+
+                        <textarea ref="mdEditorEl"></textarea>
+                    </div>
+                </div>
+
+                <div
+                    class="
+                        editor-main-content-wrapper
+                        editor-main-content-preview-wrapper
+                    "
+                    show.bind="editorState === 'preview'"
+                >
+                    <div class="preview" show.bind="editorState === 'preview'">
+                        <img
+                            if.bind="article.coverImageUrl"
+                            class="article-cover"
+                            src.bind="article.coverImageUrl"
+                            alt=""
+                        />
+
+                        <div class="article-content-wrapper">
+                            <div class="article-title mb-4">
+                                ${article.title}
+                            </div>
+                            <div class="tags">
+                                <tags
+                                    tags.bind="article.tags"
+                                    show-color.bind="true"
+                                ></tags>
+                            </div>
+                            <div
+                                class="article-content"
+                                innerhtml.bind="article.content | markDownToHtml | dompurify"
+                            ></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="actions mt-4 ps-2 ps-md-0">
+                    <button
+                        if.bind="isNew"
+                        class="btn btn-success btn--bold me-2"
+                        click.delegate="createAndPublished()"
+                    >
+                        Publish
+                    </button>
+                    <button
+                        if.bind="isNew"
+                        class="btn btn-secondary btn--bold me-2"
+                        click.delegate="create()"
+                    >
+                        Save draft
+                    </button>
+                    <button
+                        if.bind="!isNew && !isPublished"
+                        class="btn btn-success btn--bold me-2"
+                        click.delegate="saveAndPublished()"
+                    >
+                        Publish
+                    </button>
+                    <button
+                        if.bind="!isNew && isPublished"
+                        class="btn btn-danger btn--bold me-2"
+                        click.delegate="saveAndUnPublish()"
+                    >
+                        UnPublish
+                    </button>
+                    <button
+                        if.bind="!isNew"
+                        class="btn btn-primary btn--bold me-2"
+                        click.delegate="save()"
+                    >
+                        Save
+                    </button>
+                    <button
+                        class="btn btn--ghost me-2"
+                        click.delegate="revertChanged()"
+                    >
+                        Revert new changes
+                    </button>
+                    <!-- <button class="btn btn-dark btn--bold"
+                            click.delegate="cancel()">Cancel</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

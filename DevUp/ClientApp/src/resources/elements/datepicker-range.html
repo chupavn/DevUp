@@ -1,0 +1,499 @@
+<template>
+  <popover
+    placement="bottom-start"
+    popover.bind="popoverEl"
+    hide-on-click.bind="false"
+    focus-first-input.bind="false"
+    on-hidden.call="null"
+    on-show.call="null"
+  >
+    <div slot="popoverTarget" class="datepicker-container">
+      <input
+        class="form-control"
+        type="text"
+        placeholder.bind="placeholder"
+        value.bind="rangeString"
+        change.delegate="rangeStringChanged() & debounce"
+      />
+      <i
+        if.bind="rangeString"
+        class="fa fa-times clear-icon"
+        click.delegate="clearDates($event)"
+      ></i>
+      <i class="far fa-calendar date-icon"></i>
+    </div>
+    <div slot="popoverContent">
+      <div class="d-lg-flex p-4">
+        <ul class="date-range">
+          <li
+            class="date-range-item ${activeRange===range.code?'date-range-item--active':''}"
+            click.delegate="setDateRange(range)"
+            repeat.for="range of dateRangeSets"
+          >
+            ${range.name}
+          </li>
+          <popover
+            show.bind="dateRangeSets.length === allDateRangeSets.length"
+            popover.bind="weekPopoverEl"
+            hide-on-click.bind="false"
+            placement="right-start"
+          >
+            <li slot="popoverTarget" class="date-range-item">Select week</li>
+            <div slot="popoverContent" class="mt-3">
+              <div class="d-block px-4">
+                <div class="d-flex justify-content-between">
+                  <button class="btn btn-icon" click.delegate="prevYear()">
+                    <i class="fas fa-caret-left text-secondary"></i>
+                  </button>
+                  <button
+                    class="btn btn-icon text-secondary"
+                    click.delegate="goToThisYear()"
+                  >
+                    This year
+                  </button>
+                  <button class="btn btn-icon" click.delegate="nextYear()">
+                    <i class="fas fa-caret-right text-secondary"></i>
+                  </button>
+                </div>
+              </div>
+              <ul class="months-wrapper px-4 pb-4 pt-2">
+                <popover
+                  hide-on-click.bind="false"
+                  placement="right-start"
+                  repeat.for="year of years"
+                >
+                  <li
+                    slot="popoverTarget"
+                    class="month-item ${year===thisYear?'current':''}"
+                    click.delegate="getWeeks(year)"
+                  >
+                    ${year}
+                  </li>
+                  <div slot="popoverContent">
+                    <div class="d-block px-4 pt-4">
+                      <div class="d-flex justify-content-between">
+                        <button
+                          class="btn btn-icon"
+                          disabled.bind="weekFilter.from === 1"
+                          click.delegate="prevWeekFilter()"
+                        >
+                          <i class="fas fa-caret-left"></i>
+                        </button>
+                        <div class="">
+                          ${weekFilter.from} - ${weekFilter.to > weeks.length ?
+                          weeks.length: weekFilter.to}
+                        </div>
+                        <button
+                          class="btn btn-icon"
+                          disabled.bind="weekFilter.to >= weeks.length"
+                          click.delegate="nextWeekFilter()"
+                        >
+                          <i class="fas fa-caret-right"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <ul class="months-wrapper px-4 pb-4 pt-2">
+                      <li
+                        class="month-item"
+                        click.delegate="selectWeek(week, year)"
+                        repeat.for="week of visibleWeeks"
+                      >
+                        ${week}
+                      </li>
+                    </ul>
+                  </div>
+                </popover>
+              </ul>
+            </div>
+          </popover>
+          <popover
+            show.bind="dateRangeSets.length === allDateRangeSets.length"
+            placement="right-start"
+            popover.bind="monthPopoverEl"
+            hide-on-click.bind="false"
+          >
+            <li slot="popoverTarget" class="date-range-item">Select month</li>
+            <div slot="popoverContent" class="mt-3">
+              <div class="d-block px-4">
+                <div class="d-flex justify-content-between">
+                  <button class="btn btn-icon" click.delegate="prevYear()">
+                    <i class="fas fa-caret-left text-secondary"></i>
+                  </button>
+                  <button
+                    class="btn btn-icon text-secondary"
+                    click.delegate="goToThisYear()"
+                  >
+                    This year
+                  </button>
+                  <button class="btn btn-icon" click.delegate="nextYear()">
+                    <i class="fas fa-caret-right text-secondary"></i>
+                  </button>
+                </div>
+              </div>
+              <ul class="months-wrapper px-4 pb-4 pt-2">
+                <popover
+                  hide-on-click.bind="false"
+                  placement="right-start"
+                  repeat.for="year of years"
+                >
+                  <li
+                    slot="popoverTarget"
+                    class="month-item ${year===thisYear?'current':''}"
+                  >
+                    ${year}
+                  </li>
+                  <div slot="popoverContent">
+                    <ul class="months-wrapper p-4">
+                      <li
+                        class="month-item"
+                        click.delegate="selectMonth($index, year)"
+                        repeat.for="month of months"
+                      >
+                        ${month}
+                      </li>
+                    </ul>
+                  </div>
+                </popover>
+              </ul>
+            </div>
+          </popover>
+          <popover
+            show.bind="dateRangeSets.length === allDateRangeSets.length"
+            popover.bind="yearPopoverEl"
+            hide-on-click.bind="false"
+            placement="right-start"
+          >
+            <li slot="popoverTarget" class="date-range-item">Select year</li>
+            <div slot="popoverContent" class="mt-3">
+              <div class="d-block px-4">
+                <div class="d-flex justify-content-between">
+                  <button class="btn btn-icon" click.delegate="prevYear()">
+                    <i class="fas fa-caret-left text-secondary"></i>
+                  </button>
+                  <button
+                    class="btn btn-icon text-secondary"
+                    click.delegate="goToThisYear()"
+                  >
+                    This year
+                  </button>
+                  <button class="btn btn-icon" click.delegate="nextYear()">
+                    <i class="fas fa-caret-right text-secondary"></i>
+                  </button>
+                </div>
+              </div>
+              <ul class="months-wrapper px-4 pb-4 pt-2">
+                <li
+                  repeat.for="year of years"
+                  slot="dropdown-target"
+                  class="month-item ${year===thisYear?'current':''}"
+                  click.delegate="selectYear(year)"
+                >
+                  ${year}
+                </li>
+              </ul>
+            </div>
+          </popover>
+          <li
+            class="date-range-item date-range-item-clear"
+            click.delegate="toggleCustomPicker()"
+          >
+            Custom
+          </li>
+          <li
+            show.bind="dateRangeSets.length !== allDateRangeSets.length"
+            class="date-range-item date-range-item-clear"
+            click.delegate="showMoreRange()"
+          >
+            More...
+          </li>
+          <li
+            show.bind="rangeString"
+            class="date-range-item date-range-item-clear"
+            click.delegate="clearDates()"
+          >
+            <i class="fa fa-times text-secondary me-2"></i>Clear
+          </li>
+        </ul>
+        <div class="me-2 d-block" show.bind="showCustom">
+          <label for="">From</label>
+          <datepicker
+            class="${horizontal ? 'me-2' : ''}"
+            date.two-way="dateStart"
+            show-week-number.bind="showWeekNumber"
+            placeholder.bind="placeholderStart"
+            picker.two-way="pickerStart"
+            datepicker.two-way="datepickerStart"
+            on-open.delegate="startPickerOpen()"
+            date-selected.delegate="startChanged()"
+            inline.bind="false"
+          ></datepicker>
+        </div>
+        <div class="d-block" show.bind="showCustom">
+          <label for="">To</label>
+          <datepicker
+            date.two-way="dateEnd"
+            show-week-number.bind="showWeekNumber"
+            placeholder.bind="placeholderEnd"
+            picker.two-way="pickerEnd"
+            datepicker.two-way="datepickerEnd"
+            on-open.delegate="endPickerOpen()"
+            date-selected.delegate="endChanged()"
+            inline.bind="false"
+          ></datepicker>
+        </div>
+      </div>
+    </div>
+  </popover>
+
+  <dropdown
+    if.bind="1===2"
+    dropdown.two-way="dropdown"
+    hide-on-click.bind="false"
+    placement.bind="placement"
+    show-close-button.bind="false"
+    on-show.delegate="activeRange = null"
+  >
+    <div slot="dropdown-target" class="datepicker-container">
+      <input
+        type="text"
+        placeholder.bind="placeholder"
+        value.bind="rangeString"
+        change.delegate="rangeStringChanged() & debounce"
+      />
+      <i
+        if.bind="rangeString"
+        class="fa fa-times clear-icon"
+        click.delegate="clearDates($event)"
+      ></i>
+      <i class="far fa-calendar date-icon"></i>
+    </div>
+    <div
+      slot="dropdown-content"
+      style="max-width: 100vw"
+      class="${horizontal ? 'd-flex' : ''} d-lg-flex p-4 daterange-picker-inner"
+    >
+      <ul class="date-range">
+        <li
+          class="date-range-item ${activeRange===range.code?'date-range-item--active':''}"
+          click.delegate="setDateRange(range)"
+          repeat.for="range of dateRangeSets"
+        >
+          ${range.name}
+        </li>
+        <dropdown
+          show.bind="dateRangeSets.length === allDateRangeSets.length"
+          dropdown.bind="weekDropdown"
+          hide-on-click.bind="false"
+          close-when-click-out-side.bind="true"
+          show-close-button.bind="false"
+        >
+          <li slot="dropdown-target" class="date-range-item">Select week</li>
+          <div slot="dropdown-content" class="mt-3">
+            <div class="d-block px-4">
+              <div class="d-flex justify-content-between">
+                <button class="btn btn-icon" click.delegate="prevYear()">
+                  <i class="fas fa-caret-left text-secondary"></i>
+                </button>
+                <button
+                  class="btn btn-icon text-secondary"
+                  click.delegate="goToThisYear()"
+                >
+                  This year
+                </button>
+                <button class="btn btn-icon" click.delegate="nextYear()">
+                  <i class="fas fa-caret-right text-secondary"></i>
+                </button>
+              </div>
+            </div>
+            <ul class="months-wrapper p-4">
+              <dropdown
+                hide-on-click.bind="false"
+                close-when-click-out-side.bind="true"
+                placement="right"
+                repeat.for="year of years"
+              >
+                <li
+                  slot="dropdown-target"
+                  class="month-item ${year===thisYear?'current':''}"
+                  click.delegate="getWeeks(year)"
+                >
+                  ${year}
+                </li>
+                <div slot="dropdown-content">
+                  <div class="d-block px-4 pt-4">
+                    <div class="d-flex justify-content-between">
+                      <button
+                        class="btn btn-icon"
+                        disabled.bind="weekFilter.from === 1"
+                        click.delegate="prevWeekFilter()"
+                      >
+                        <i class="fas fa-caret-left"></i>
+                      </button>
+                      <div class="">
+                        ${weekFilter.from} - ${weekFilter.to > weeks.length ?
+                        weeks.length: weekFilter.to}
+                      </div>
+                      <button
+                        class="btn btn-icon"
+                        disabled.bind="weekFilter.to >= weeks.length"
+                        click.delegate="nextWeekFilter()"
+                      >
+                        <i class="fas fa-caret-right"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <ul class="months-wrapper p-4">
+                    <li
+                      class="month-item"
+                      click.delegate="selectWeek(week, year)"
+                      repeat.for="week of visibleWeeks"
+                    >
+                      ${week}
+                    </li>
+                  </ul>
+                </div>
+              </dropdown>
+            </ul>
+          </div>
+        </dropdown>
+        <dropdown
+          show.bind="dateRangeSets.length === allDateRangeSets.length"
+          dropdown.bind="monthDropdown"
+          hide-on-click.bind="false"
+          close-when-click-out-side.bind="true"
+          show-close-button.bind="false"
+        >
+          <li slot="dropdown-target" class="date-range-item">Select month</li>
+          <div slot="dropdown-content" class="mt-3">
+            <div class="d-block px-4">
+              <div class="d-flex justify-content-between">
+                <button class="btn btn-icon" click.delegate="prevYear()">
+                  <i class="fas fa-caret-left text-secondary"></i>
+                </button>
+                <button
+                  class="btn btn-icon text-secondary"
+                  click.delegate="goToThisYear()"
+                >
+                  This year
+                </button>
+                <button class="btn btn-icon" click.delegate="nextYear()">
+                  <i class="fas fa-caret-right text-secondary"></i>
+                </button>
+              </div>
+            </div>
+            <ul class="months-wrapper p-4">
+              <dropdown
+                hide-on-click.bind="false"
+                close-when-click-out-side.bind="true"
+                placement="right"
+                repeat.for="year of years"
+              >
+                <li
+                  slot="dropdown-target"
+                  class="month-item ${year===thisYear?'current':''}"
+                >
+                  ${year}
+                </li>
+                <div slot="dropdown-content">
+                  <ul class="months-wrapper p-4">
+                    <li
+                      class="month-item"
+                      click.delegate="selectMonth($index, year)"
+                      repeat.for="month of months"
+                    >
+                      ${month}
+                    </li>
+                  </ul>
+                </div>
+              </dropdown>
+            </ul>
+          </div>
+        </dropdown>
+        <dropdown
+          show.bind="dateRangeSets.length === allDateRangeSets.length"
+          dropdown.bind="yearDropdown"
+          hide-on-click.bind="false"
+          close-when-click-out-side.bind="true"
+          show-close-button.bind="false"
+        >
+          <li slot="dropdown-target" class="date-range-item">Select year</li>
+          <div slot="dropdown-content" class="mt-3">
+            <div class="d-block px-4">
+              <div class="d-flex justify-content-between">
+                <button class="btn btn-icon" click.delegate="prevYear()">
+                  <i class="fas fa-caret-left text-secondary"></i>
+                </button>
+                <button
+                  class="btn btn-icon text-secondary"
+                  click.delegate="goToThisYear()"
+                >
+                  This year
+                </button>
+                <button class="btn btn-icon" click.delegate="nextYear()">
+                  <i class="fas fa-caret-right text-secondary"></i>
+                </button>
+              </div>
+            </div>
+            <ul class="months-wrapper p-4">
+              <li
+                repeat.for="year of years"
+                slot="dropdown-target"
+                class="month-item ${year===thisYear?'current':''}"
+                click.delegate="selectYear(year)"
+              >
+                ${year}
+              </li>
+            </ul>
+          </div>
+        </dropdown>
+        <li
+          class="date-range-item date-range-item-clear"
+          click.delegate="toggleCustomPicker()"
+        >
+          Custom
+        </li>
+        <li
+          show.bind="dateRangeSets.length !== allDateRangeSets.length"
+          class="date-range-item date-range-item-clear"
+          click.delegate="showMoreRange()"
+        >
+          More...
+        </li>
+        <li
+          show.bind="rangeString"
+          class="date-range-item date-range-item-clear"
+          click.delegate="clearDates()"
+        >
+          <i class="fa fa-times text-secondary me-2"></i>Clear
+        </li>
+      </ul>
+      <div class="form-group me-2" show.bind="showCustom">
+        <label for="">From</label>
+        <datepicker
+          class="${horizontal ? 'me-2' : ''}"
+          date.two-way="dateStart"
+          show-week-number.bind="showWeekNumber"
+          placeholder.bind="placeholderStart"
+          picker.two-way="pickerStart"
+          datepicker.two-way="datepickerStart"
+          on-open.delegate="startPickerOpen()"
+          date-selected.delegate="startChanged()"
+          inline.bind="true"
+        ></datepicker>
+      </div>
+      <div class="form-group" show.bind="showCustom">
+        <label for="">To</label>
+        <datepicker
+          date.two-way="dateEnd"
+          show-week-number.bind="showWeekNumber"
+          placeholder.bind="placeholderEnd"
+          picker.two-way="pickerEnd"
+          datepicker.two-way="datepickerEnd"
+          on-open.delegate="endPickerOpen()"
+          date-selected.delegate="endChanged()"
+          inline.bind="true"
+        ></datepicker>
+      </div>
+    </div>
+  </dropdown>
+</template>
