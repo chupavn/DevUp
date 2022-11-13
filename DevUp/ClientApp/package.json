@@ -12,7 +12,7 @@
     "@egjs/flicking": "^4.0.0",
     "@egjs/flicking-plugins": "^4.0.0",
     "@shopify/draggable": "^1.0.0-beta.8",
-    "@yaireo/tagify": "^4.1.2",
+    "@yaireo/tagify": "4.1.2",
     "aurelia-after-attached-plugin": "aurelia-ui-toolkits/aurelia-after-attached-plugin",
     "aurelia-animator-css": "^1.0.4",
     "aurelia-bootstrapper": "^2.4.0",

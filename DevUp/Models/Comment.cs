@@ -10,15 +10,15 @@ namespace DevUp.Models
         public int Id { get; set; }
         public int? ParentId { get; set; }
         [ForeignKey("ParentId")]
-        public Comment Parent { get; set; }
+        public virtual Comment Parent { get; set; }
         [Required]
         public string AuthorId { get; set; }
         [ForeignKey("AuthorId")]
-        public ApplicationUser Author { get; set; }
+        public virtual ApplicationUser Author { get; set; }
         [Required]
         public int ArticleId { get; set; }
         [ForeignKey("ArticleId")]
-        public Article Article { get; set; }
+        public virtual Article Article { get; set; }
         [Required]
         public string Content { get; set; }
         public DateTime CreateAt { get; set; }

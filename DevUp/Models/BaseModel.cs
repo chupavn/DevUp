@@ -14,9 +14,9 @@ namespace DevUp.Models
         public int CreateUid { get; set; }
         public int UpdateUid { get; set; }
         [ForeignKey("CreateUid")]
-        public ApplicationUser CreateBy { get; set; }
+        public virtual ApplicationUser CreateBy { get; set; }
         [ForeignKey("UpdateUid")]
-        public ApplicationUser UpdateBy { get; set; }
+        public virtual ApplicationUser UpdateBy { get; set; }
         [Required]
         public DateTime CreateDate { get; set; }
         public DateTime? UpdateDate { get; set; }

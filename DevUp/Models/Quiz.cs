@@ -12,7 +12,7 @@ namespace DevUp.Models
         public int Id { get; set; }
         public string HostId { get; set; }
         [ForeignKey("HostId")]
-        public ApplicationUser Host { get; set; }
+        public virtual ApplicationUser Host { get; set; }
         [Required]
         public string Title { get; set; }
         public string MetaTitle { get; set; }

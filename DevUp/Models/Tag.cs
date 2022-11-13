@@ -11,7 +11,7 @@ namespace DevUp.Models
         public int Id { get; set; }
         public string AuthorId { get; set; }
         [ForeignKey("AuthorId")]
-        public ApplicationUser Author { get; set; }
+        public virtual ApplicationUser Author { get; set; }
         [Required]
         public string Name { get; set; }
         public string? Description { get; set; }
