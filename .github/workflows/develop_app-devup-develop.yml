@@ -7,6 +7,7 @@ on:
   push:
     branches:
       - Develop
+      - Production
   workflow_dispatch:
   
 env:
@@ -74,11 +75,22 @@ jobs:
         with:
           name: .net-app
 
-      - name: Deploy to Azure Web App
+      - name: Deploy to Azure (develop)
+        if: github.ref == 'refs/heads/develop'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'app-devup-develop'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_88711400B5F94259BBABC7565C4734BB }}
+          package: .
+          
+      - name: Deploy to Azure (production)
+        if: github.ref == 'refs/heads/production'
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'app-devup-production'
+          slot-name: 'Production'
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1743D0B1DB4A40C2A5FE248B269BA4E6 }}
           package: .
