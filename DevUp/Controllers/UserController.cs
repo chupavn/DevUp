@@ -158,7 +158,7 @@ namespace DevUp.Controllers
                 UserName = model.Email,
                 Email = model.Email,
                 PhoneNumber = model.PhoneNumber,
-                Name = model.Name,
+                Name = model.Name ?? model.Email,
                 Bio = model.Bio,
                 Work = model.Work,
                 Location = model.Location,
@@ -266,7 +266,7 @@ namespace DevUp.Controllers
 
     public class RegisterUserDto
     {
-        public string Name { get; set; }
+        public string? Name { get; set; }
         public string Email { get; set; }
         public string? PhoneNumber { get; set; }
         public string Password { get; set; }
