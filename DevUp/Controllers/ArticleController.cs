@@ -21,14 +21,14 @@ namespace DevUp.Controllers
         private readonly IArticleService _articleService;
         private readonly ITagService _tagService;
         private readonly IMapper _mapper;
-        private readonly DataContext _context;
+        private readonly ILogger<ArticleController> _logger;
 
-        public ArticleController(IArticleService articleService, ITagService tagService, IMapper mapper, DataContext context) : base(context)
+        public ArticleController(IArticleService articleService, ITagService tagService, IMapper mapper, DataContext context, ILogger<ArticleController> logger) : base(context)
         {
             _articleService = articleService;
             _tagService = tagService;
             _mapper = mapper;
-            _context = context;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -40,11 +40,11 @@ namespace DevUp.Controllers
             if (CurrentUser != null)
             {
                 var ids = dtos.Select(x => x.Id);
-                var readingListsByCurrentUser = _context.ReadingLists.Where(x => ids.Contains(x.ArticleId) && x.UserId == CurrentUser.Id).ToList();
+                var readingListsByCurrentUser = _dbContext.ReadingLists.Where(x => ids.Contains(x.ArticleId) && x.UserId == CurrentUser.Id).ToList();
 
-                var userLikeArticlesByCurrentUser = _context.UserLikeArticles.Where(x => ids.Contains(x.ArticleId) && x.UserId == CurrentUser.Id).ToList();
+                var userLikeArticlesByCurrentUser = _dbContext.UserLikeArticles.Where(x => ids.Contains(x.ArticleId) && x.UserId == CurrentUser.Id).ToList();
 
-                var userTags = _context.UserTags.Where(x => x.UserId == CurrentUser.Id).ToList();
+                var userTags =  _dbContext.UserTags.Where(x => x.UserId == CurrentUser.Id).ToList();
                 var userTagIds = userTags.Select(x => x.TagId).Distinct();
 
                 foreach (var item in dtos)
@@ -71,14 +71,14 @@ namespace DevUp.Controllers
             var dto = _mapper.Map<ArticleResponseDto>(article);
             if (CurrentUser != null)
             {
-                var readingList = _context.ReadingLists.FirstOrDefault(x => x.ArticleId == dto.Id && x.UserId == CurrentUser.Id);
+                var readingList = _dbContext.ReadingLists.FirstOrDefault(x => x.ArticleId == dto.Id && x.UserId == CurrentUser.Id);
                 dto.IsReadingList = readingList != null;
                 dto.IsArchivedReadingList = readingList != null && readingList.IsArchived;
-                dto.IsLiked = _context.UserLikeArticles.Any(x => x.ArticleId == dto.Id && x.UserId == CurrentUser.Id);
+                dto.IsLiked = _dbContext.UserLikeArticles.Any(x => x.ArticleId == dto.Id && x.UserId == CurrentUser.Id);
 
                 var commentIds = dto.Comments.Select(x => x.Id);
 
-                var userLikeCommentsByCurrentUser = _context.UserLikeComments.Where(x => commentIds.Contains(x.CommentId) && x.UserId == CurrentUser.Id).ToList();
+                var userLikeCommentsByCurrentUser = _dbContext.UserLikeComments.Where(x => commentIds.Contains(x.CommentId) && x.UserId == CurrentUser.Id).ToList();
 
                 foreach (var comment in dto.Comments)
                 {
@@ -105,7 +105,7 @@ namespace DevUp.Controllers
             {
                 if (!string.IsNullOrEmpty(tag.Name.Trim()))
                 {
-                    var tagDbObject = _context.Tags.FirstOrDefault(x => x.Name == tag.Name);
+                    var tagDbObject = _dbContext.Tags.FirstOrDefault(x => x.Name == tag.Name);
                     if (tagDbObject != null)
                     {
                         tagDbObject.Articles.Add(article);
@@ -116,12 +116,12 @@ namespace DevUp.Controllers
                         newTag.AuthorId = CurrentUser.Id;
                         newTag.CreateAt = DateTime.UtcNow;
                         newTag.Articles.Add(article);
-                        _context.Tags.Add(newTag);
+                        _dbContext.Tags.Add(newTag);
                     }
                 }
             }
 
-            _context.SaveChanges();
+            _dbContext.SaveChanges();
 
             return Ok(_mapper.Map<ArticleResponseDto>(article));
         }
@@ -141,19 +141,19 @@ namespace DevUp.Controllers
 
             // remove
             var removedTagsInArticle = article.Tags.Where(t => model.Tags.All(mt => mt.Name != t.Name)).Select(x => x.Id);
-            var removedTags = _context.Tags.Where(x => removedTagsInArticle.Contains(x.Id));
+            var removedTags = _dbContext.Tags.Where(x => removedTagsInArticle.Contains(x.Id));
             foreach (var rmTag in removedTags)
             {
                 article.Tags.Remove(rmTag);
             }
 
-            _context.SaveChanges();
+            _dbContext.SaveChanges();
 
             foreach (var tag in model.Tags)
             {
                 if (!string.IsNullOrEmpty(tag.Name.Trim()))
                 {
-                    var tagDbObject = _context.Tags.FirstOrDefault(x => x.Name == tag.Name);
+                    var tagDbObject = _dbContext.Tags.FirstOrDefault(x => x.Name == tag.Name);
                     if (tagDbObject != null)
                     {
                         if (!article.Tags.Any(t => t.Name == tag.Name))
@@ -167,12 +167,12 @@ namespace DevUp.Controllers
                         newTag.AuthorId = CurrentUser.Id;
                         newTag.CreateAt = DateTime.UtcNow;
                         newTag.Articles.Add(article);
-                        _context.Tags.Add(newTag);
+                        _dbContext.Tags.Add(newTag);
                     }
                 }
             }
 
-            _context.SaveChanges();
+            _dbContext.SaveChanges();
 
             return Ok(_mapper.Map<ArticleResponseDto>(article));
         }
@@ -181,12 +181,12 @@ namespace DevUp.Controllers
         [HttpPut("{id}/published")]
         public ActionResult<ArticleResponseDto> Published(int id)
         {
-            var article = _context.Articles.FirstOrDefault(x => x.Id == id && x.AuthorId == CurrentUser.Id);
+            var article = _dbContext.Articles.FirstOrDefault(x => x.Id == id && x.AuthorId == CurrentUser.Id);
             if (article != null)
             {
                 article.PublishedAt = DateTime.UtcNow;
                 article.IsPublished = true;
-                _context.SaveChanges();
+                _dbContext.SaveChanges();
                 return Ok(_mapper.Map<ArticleResponseDto>(article));
             }
             return BadRequest();
@@ -196,12 +196,12 @@ namespace DevUp.Controllers
         [HttpPut("{id}/unpublished")]
         public ActionResult<ArticleResponseDto> Unpublished(int id)
         {
-            var article = _context.Articles.FirstOrDefault(x => x.Id == id && x.AuthorId == CurrentUser.Id);
+            var article = _dbContext.Articles.FirstOrDefault(x => x.Id == id && x.AuthorId == CurrentUser.Id);
             if (article != null)
             {
                 article.PublishedAt = null;
                 article.IsPublished = false;
-                _context.SaveChanges();
+                _dbContext.SaveChanges();
                 return Ok(_mapper.Map<ArticleResponseDto>(article));
             }
             return BadRequest();

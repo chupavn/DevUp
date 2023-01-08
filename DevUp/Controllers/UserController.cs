@@ -19,13 +19,11 @@ namespace DevUp.Controllers
     public class UserController : BaseController
     {
 
-        private readonly DataContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IMapper _mapper;
 
         public UserController(DataContext context, UserManager<ApplicationUser> userManager, IMapper mapper) : base(context)
         {
-            _context = context;
             _userManager = userManager;
             _mapper = mapper;
         }
@@ -33,7 +31,7 @@ namespace DevUp.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok(dbContext.Users.Where(x => !x.Deleted.HasValue).OrderBy(x => x.Name).Select(x =>
+            return Ok(_dbContext.Users.Where(x => !x.Deleted.HasValue).OrderBy(x => x.Name).Select(x =>
                     new UserData
                     {
                         Id = x.Id,
@@ -48,7 +46,7 @@ namespace DevUp.Controllers
         [HttpGet("{userId}/roles")]
         public async Task<IActionResult> GetUserRoles(string userId)
         {
-            var user = dbContext.Users.Where(x => !x.Deleted.HasValue).FirstOrDefault(x => x.Id == userId);
+            var user = _dbContext.Users.Where(x => !x.Deleted.HasValue).FirstOrDefault(x => x.Id == userId);
             if (user == null)
             {
                 return NotFound();
@@ -64,9 +62,9 @@ namespace DevUp.Controllers
         public IActionResult SetLanguage(string language)
         {
             var userId = _userManager.GetUserId(HttpContext.User);
-            var user = dbContext.Users.Where(x => !x.Deleted.HasValue).First(x => x.Email == userId);
+            var user = _dbContext.Users.Where(x => !x.Deleted.HasValue).First(x => x.Email == userId);
             user.Language = language;
-            dbContext.SaveChanges();
+            _dbContext.SaveChanges();
 
             return Ok();
         }
@@ -76,8 +74,8 @@ namespace DevUp.Controllers
         [Route("current-user")]
         public async Task<IActionResult> GetLoggedinUser()
         {
-            var userId = _userManager.GetUserId(HttpContext.User);
-            var dbObjectUser = dbContext.Users.Where(x => !x.Deleted.HasValue).FirstOrDefault(x => x.Email == userId);
+            var userId = _userManager.GetUserId(User);
+            var dbObjectUser = _dbContext.Users.Where(x => !x.Deleted.HasValue).FirstOrDefault(x => x.Email == userId);
 
             if (dbObjectUser != null)
             {
@@ -91,7 +89,7 @@ namespace DevUp.Controllers
                     AvatarUrl = dbObjectUser.AvatarUrl
                 };
 
-                var userTags = _context.UserTags.Include(x => x.Tag).Where(x => x.UserId == CurrentUser.Id);
+                var userTags = _dbContext.UserTags.Include(x => x.Tag).Where(x => x.UserId == CurrentUser.Id);
                 var tags = userTags.Select(x => x.Tag).Distinct();
                 user.Tags = _mapper.Map<List<TagResponseDto>>(tags);
 
@@ -110,7 +108,7 @@ namespace DevUp.Controllers
         [Route("{id}")]
         public IActionResult Get(string id)
         {
-            return Ok(dbContext.Users.Select(x => new UserData
+            return Ok(_dbContext.Users.Select(x => new UserData
             {
                 Id = x.Id,
                 Name = x.Name,
@@ -131,12 +129,12 @@ namespace DevUp.Controllers
         public IActionResult GetUserProfile(string userId)
         {
 
-            var user = dbContext.Users.FirstOrDefault(x => x.Id == userId);
+            var user = _dbContext.Users.FirstOrDefault(x => x.Id == userId);
             if (user != null)
             {
                 var dto = _mapper.Map<UserProfileResponse>(user);
-                dto.ArticleCount = _context.Articles.Count(x => x.AuthorId == userId && x.DeletedAt == null);
-                dto.CommentCount = _context.Comments.Count(x => x.AuthorId == userId && x.DeletedAt == null);
+                dto.ArticleCount = _dbContext.Articles.Count(x => x.AuthorId == userId && x.DeletedAt == null);
+                dto.CommentCount = _dbContext.Comments.Count(x => x.AuthorId == userId && x.DeletedAt == null);
                 return Ok(dto);
             }
 
@@ -195,7 +193,7 @@ namespace DevUp.Controllers
         public async Task<IActionResult> UpdateUser(string userId, [FromBody] UserData userData)
         {
             var loggedUserEmail = _userManager.GetUserId(HttpContext.User);
-            var user = dbContext.Users.FirstOrDefault(x => x.Id == userId);
+            var user = _dbContext.Users.FirstOrDefault(x => x.Id == userId);
 
             if (user == null)
             {
@@ -233,7 +231,7 @@ namespace DevUp.Controllers
         [HttpDelete("{userId}")]
         public async Task<IActionResult> RemoveUser(string userId)
         {
-            var user = dbContext.Users.FirstOrDefault(x => x.Id == userId);
+            var user = _dbContext.Users.FirstOrDefault(x => x.Id == userId);
 
             if (user == null)
             {
@@ -241,7 +239,7 @@ namespace DevUp.Controllers
             }
 
             user.Deleted = DateTime.UtcNow;
-            await dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
 
             return Ok();
         }

@@ -1,51 +1,67 @@
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using DevUp;
 using DevUp.Data;
 using DevUp.Helpers;
 using DevUp.Models;
-using DevUp.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using Serilog;
+using Serilog.Events;
 using System.Text;
 
+//Log.Logger = new LoggerConfiguration()
+//             .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+//             .Enrich.FromLogContext()
+//             .WriteTo.Console()
+//             .CreateBootstrapLogger();
+
+//Log.Information("Starting up");
+
 var builder = WebApplication.CreateBuilder(args);
+
+var IS_LOCAL = builder.Configuration.GetValue<bool>("DEV_LOCAL", false);
+var seqUrl = IS_LOCAL ? "http://localhost:5341" : builder.Configuration.GetValue("Seq:Url", "http://localhost:5341");
+
+builder.Host.UseSerilog((hostContext, services, configuration) => {
+    configuration
+        .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+        .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+        .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database", LogEventLevel.Warning)
+        .Enrich.FromLogContext()
+        .Enrich.WithProperty("Application", "DevUp")
+        .Enrich.WithProperty("Environment", hostContext.HostingEnvironment.EnvironmentName)
+        .WriteTo.Console()
+        .WriteTo.Seq(seqUrl, apiKey: hostContext.Configuration.GetValue<string>("Seq:ApiKey"))
+        .ReadFrom.Configuration(hostContext.Configuration);
+});
 
 // Add services to the container.
 builder.Services.AddCors();
 
-builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.IgnoreNullValues = false);
+//builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.IgnoreNullValues = false);
 builder.Services.AddControllers().AddNewtonsoftJson(o =>
 {
     o.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
 });
 
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+//builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var connectionString = builder.Configuration.GetConnectionString("SqlServerConnection");
 builder.Services.AddDbContext<DataContext>(opt =>
 {
     opt.UseSqlServer(connectionString);
+    //opt.EnableSensitiveDataLogging(true);
     //opt.UseNpgsql(connectionString);
-    opt.EnableSensitiveDataLogging(true);
     //opt.UseSnakeCaseNamingConvention();
 });
 
 // configure strongly typed settings object
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
-
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IQuizService, QuizService>();
-builder.Services.AddScoped<IQuizQuestionService, QuizQuestionService>();
-builder.Services.AddScoped<IArticleService, ArticleService>();
-builder.Services.AddScoped<ITagService, TagService>();
-builder.Services.AddScoped<ICommentService, CommentService>();
-builder.Services.AddSingleton<IUploadService, UploadService>();
-builder.Services.AddScoped<JwtService>();
-builder.Services.AddScoped<IEmailService, EmailService>();
 
 // add authentication
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
@@ -118,6 +134,12 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddControllers();
 
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder => {
+    containerBuilder.RegisterModule<DevUpModule>();
+    containerBuilder.RegisterInstance(AutoMapperConfig.Initialize()).SingleInstance();
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -149,9 +171,15 @@ app.UseStaticFiles(new StaticFileOptions
 app.UseStaticFiles();
 app.UseHttpsRedirection();
 app.UseRouting();
+app.UseSerilogRequestLogging();
 
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+// global error handler
+app.UseMiddleware<ErrorHandlerMiddleware>();
+
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();

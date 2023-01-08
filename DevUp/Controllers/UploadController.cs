@@ -11,25 +11,23 @@ using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Http;
 using DevUp.Services;
+using System.Net;
 
 namespace DevUp.Controllers
 {
     [Authorize]
-    [ApiController]
     [Route("api/upload")]
     public class UploadController : BaseController
     {
-        private readonly DataContext _context;
         private readonly IUploadService _uploadService;
 
         public UploadController(DataContext context, IUploadService uploadService) : base(context)
         {
-            _context = context;
             _uploadService = uploadService;
         }
 
         [HttpPost]
-        public IActionResult Upload(List<IFormFile> files)
+        public async Task<IActionResult> Upload([FromForm] List<IFormFile> files)
         {
             try
             {
@@ -38,9 +36,9 @@ namespace DevUp.Controllers
                 {
                     var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
                     var stream = file.OpenReadStream();
-                    var uploadResult = _uploadService.Upload(fileName, stream);
-
-                    return Ok(uploadResult);
+                    var uploadResult = await _uploadService.UploadAsync(fileName, stream);
+                    if (uploadResult.StatusCode == HttpStatusCode.OK) return Ok(uploadResult);
+                    return StatusCode((int)HttpStatusCode.InternalServerError, "Upload failure");
                 }
                 else
                 {
@@ -54,7 +52,7 @@ namespace DevUp.Controllers
         }
 
         [HttpPost("upload-avatar")]
-        public IActionResult UploadAvatar(List<IFormFile> files)
+        public async Task<IActionResult> UploadAvatar([FromForm] List<IFormFile> files)
         {
             try
             {
@@ -63,7 +61,7 @@ namespace DevUp.Controllers
                 {
                     var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
                     var stream = file.OpenReadStream();
-                    var uploadResult = _uploadService.UploadAvatar(fileName, stream);
+                    var uploadResult = await _uploadService.UploadAvatarAsync(fileName, stream);
 
                     return Ok(uploadResult);
                 }

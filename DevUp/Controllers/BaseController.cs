@@ -11,13 +11,13 @@ namespace DevUp.Controllers
     {
         // returns the current authenticated user (null if not logged in)
         public ApplicationUser CurrentUser => GetCurrentUser();
-        protected readonly DataContext dbContext;
+        protected readonly DataContext _dbContext;
 
         protected bool EnableSoftDelete { get; set; } = true;
 
-        protected BaseController(DataContext _dbContext)
+        protected BaseController(DataContext dbContext)
         {
-            dbContext = _dbContext;
+            _dbContext = dbContext;
         }
 
         protected string GetUsersName()
@@ -25,7 +25,7 @@ namespace DevUp.Controllers
             var userId = User.UserId();
 
             if (string.IsNullOrEmpty(userId)) return User.UserName();
-            var user = dbContext.Users.FirstOrDefault(x => x.Id == userId);
+            var user = _dbContext.Users.FirstOrDefault(x => x.Id == userId);
             return user != null ? user.Name : User.UserName();
         }
 
@@ -34,7 +34,7 @@ namespace DevUp.Controllers
             var userId = User.UserId();
 
             if (string.IsNullOrEmpty(userId)) return null;
-            var user = dbContext.Users.FirstOrDefault(x => x.Id == userId);
+            var user = _dbContext.Users.FirstOrDefault(x => x.Id == userId);
             return user ?? null;
         }
     }

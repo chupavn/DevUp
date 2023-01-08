@@ -18,17 +18,13 @@ namespace DevUp.Controllers
     [Route("api/comments")]
     public class CommentController : BaseController
     {
-        //private readonly IArticleService _articleService;
         private readonly ICommentService _commentService;
         private readonly IMapper _mapper;
-        private readonly DataContext _context;
 
-        public CommentController(IArticleService articleService, ICommentService commentService, IMapper mapper, DataContext context) : base(context)
+        public CommentController(ICommentService commentService, IMapper mapper, DataContext context) : base(context)
         {
-            //_articleService = articleService;
             _commentService = commentService;
             _mapper = mapper;
-            _context = context;
         }
 
         [HttpGet]
@@ -41,7 +37,7 @@ namespace DevUp.Controllers
             {
                 var ids = dtos.Select(x => x.Id);
 
-                var userLikeCommentsByCurrentUser = _context.UserLikeComments.Where(x => ids.Contains(x.CommentId) && x.UserId == CurrentUser.Id).ToList();
+                var userLikeCommentsByCurrentUser = _dbContext.UserLikeComments.Where(x => ids.Contains(x.CommentId) && x.UserId == CurrentUser.Id).ToList();
 
                 foreach (var item in dtos)
                 {
@@ -59,7 +55,7 @@ namespace DevUp.Controllers
             var dto = _mapper.Map<CommentResponseDto>(comment);
             if (CurrentUser != null)
             {
-                dto.IsLiked = _context.UserLikeComments.Any(x => x.CommentId == dto.Id && x.UserId == CurrentUser.Id);
+                dto.IsLiked = _dbContext.UserLikeComments.Any(x => x.CommentId == dto.Id && x.UserId == CurrentUser.Id);
             }
 
             return Ok(dto);
